@@ -7,16 +7,37 @@ router.get('/', function(req, res, next){
     res.render('index');
 });
 
+router.get('/index', function(req, res, next){
+    res.render('index');
+});
+
 router.get('/about', function(req, res, next){
     res.render('about');
 });
 
-router.post('/email/contact', sendMessage, function(req, res){
-    res.render('contact-success', {data: req.body});
+router.get('/shop-details', function(req, res, next){
+    res.render('shop-details');
+});
+
+router.get('/shop-grid', function(req, res, next){
+    res.render('shop-grid');
+});
+
+
+router.get('/shoping-cart', function(req, res, next){
+    res.render('shoping-cart');
+});
+
+router.get('/checkout', function(req, res, next){
+    res.render('checkout');
 });
 
 router.get('/contact', function(req, res, next) {
   res.render('contact');
+});
+
+router.post('/email/contact', sendMessage, function(req, res){
+    res.render('contact-success', {data: req.body});
 });
 
 
