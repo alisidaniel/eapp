@@ -5,7 +5,6 @@ module.exports = (sequelize, DataTypes) => {
     const userModels = sequelize.define('User', {
         firstName:{
             type: DataTypes.STRING,
-            isAlphanumeric: true,
             required: true,
             allowNull: false
         },

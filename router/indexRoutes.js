@@ -1,8 +1,14 @@
 var express = require('express');
 var {sendMessage} = require('../controllers/contactController');
+var {login, register} = require('../controllers/userController');
 var router = express.Router();
 
 /* GET home page. */
+
+router.post('/register', register, function(req, res, next){
+    res.send(res.data);
+});
+
 router.get('/', function(req, res, next){
     res.render('index');
 });

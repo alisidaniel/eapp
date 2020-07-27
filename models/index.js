@@ -18,7 +18,14 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
 const db = {};
 
 db.Sequelize = Sequelize;
-db.sequelize = sequelize;
+
+db.sequelize = sequelize
+.authenticate()
+.then(() => { 
+    console.log('Connection has been established successfully.');
+}).catch(err => {
+    console.error('Unable to connect to the database:', err);
+});;
 
 db.User = require('./userModels.js')(sequelize, Sequelize);
 

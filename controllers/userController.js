@@ -3,9 +3,23 @@ const User = db.User;
 const Op = db.Sequelize.Op;
 
 
-const register = (req, res, next) => {
+const register = async (req, res, next) => {
+    try{
+         console.log(req.body);
+        if (!req.body) {
+            res.status(400).send({
+              message: "Content can not be empty!"
+            });
+            return;
+          }
+    
+          const user = await User.create({...req.body});
 
+          return res.json(user);
 
+    }catch(e){
+        next(e);
+    }
 }
 
 const login = (req, res, next) => {
@@ -21,3 +35,7 @@ const passwordReset = (req, res, next) => {
     
 }
 
+module.exports = {
+
+    register, login, edit, passwordReset
+}

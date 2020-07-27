@@ -5,6 +5,10 @@ var {PORT} = require('./config/config');
 
 var indexRoutes = require('./router/indexRoutes');
 
+const db = require("./models");
+
+db.sequelize.sync;
+
 const app = express();
 
 // parse application/x-www-form-urlencoded
