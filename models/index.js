@@ -27,6 +27,8 @@ db.sequelize = sequelize
     console.error('Unable to connect to the database:', err);
 });;
 
-db.User = require('./userModels.js')(sequelize, Sequelize);
+db.User = require('./userModel.js')(sequelize, Sequelize);
+db.Product = require('./productModel.js')(sequelize, Sequelize);
+db.ShippingAddress = require('./shippingAddressModel.js')(sequelize, Sequelize);
 
 module.exports = db;
