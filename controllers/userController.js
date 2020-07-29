@@ -6,16 +6,21 @@ const Op = db.Sequelize.Op;
 const register = async (req, res, next) => {
     try{
          console.log(req.body);
+         let {email} = req.body;
+
         if (!req.body) {
             res.status(400).send({
               message: "Content can not be empty!"
             });
             return;
           }
-    
-          const user = await User.create({...req.body});
 
-          return res.json(user);
+        const userExist = await User.findOne({email:email});
+        if (userExist) return res.status(400).json({message: "User account exist.", status:false});
+
+        const user = await User.create({...req.body});
+
+        return res.json(user);
 
     }catch(e){
         next(e);

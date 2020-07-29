@@ -30,7 +30,5 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
-    productModel.belongsTo(User);
-
     return productModel;
 }

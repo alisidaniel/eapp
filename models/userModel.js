@@ -19,11 +19,11 @@ module.exports = (sequelize, DataTypes) => {
             required: true,
             allowNull: false
         },
-        password:{
-            type: DataTypes.STRING,
-            required: true,
-            allowNull: false
-        }
+        // password:{
+        //     type: DataTypes.STRING,
+        //     required: true,
+        //     allowNull: false
+        // }
     });
 
     return userModel;

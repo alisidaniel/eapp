@@ -31,4 +31,12 @@ db.User = require('./userModel.js')(sequelize, Sequelize);
 db.Product = require('./productModel.js')(sequelize, Sequelize);
 db.ShippingAddress = require('./shippingAddressModel.js')(sequelize, Sequelize);
 
+
+//# Relationship and Association 
+
+db.User.hasMany(db.Product, {as: "Products" });
+db.Product.belongsTo(db.User, {
+  foreignKey: "userId", as: "user"
+});
+
 module.exports = db;
