@@ -1,11 +1,15 @@
 var express = require('express');
 var {sendMessage} = require('../controllers/contactController');
-var {login, register} = require('../controllers/userController');
+var {login, register} = require('../controllers/authController');
 var router = express.Router();
 
 /* GET home page. */
 
 router.post('/register', register, function(req, res, next){
+    res.send(res.data);
+});
+
+router.post('/login', login, function(req, res, next){
     res.send(res.data);
 });
 

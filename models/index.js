@@ -18,25 +18,19 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
 const db = {};
 
 db.Sequelize = Sequelize;
+db.sequelize = sequelize;
 
-db.sequelize = sequelize
-.authenticate()
-.then(() => { 
-    console.log('Connection has been established successfully.');
-}).catch(err => {
-    console.error('Unable to connect to the database:', err);
-});;
 
 db.User = require('./userModel.js')(sequelize, Sequelize);
 db.Product = require('./productModel.js')(sequelize, Sequelize);
 db.ShippingAddress = require('./shippingAddressModel.js')(sequelize, Sequelize);
 
 
-//# Relationship and Association 
+//# Relationship and Associations 
 
-db.User.hasMany(db.Product, {as: "Products" });
-db.Product.belongsTo(db.User, {
-  foreignKey: "userId", as: "user"
-});
+// db.User.hasMany(db.Product, {as: "Products" });
+// db.Product.belongsTo(db.User, {
+//   foreignKey: "userId", as: "user"
+// });
 
 module.exports = db;

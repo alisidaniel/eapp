@@ -7,7 +7,11 @@ var indexRoutes = require('./router/indexRoutes');
 
 const db = require("./models");
 
-db.sequelize.sync;
+db.sequelize.sync().then(() => {
+    console.log("running db here ...")
+}).catch(err => {
+    console.log(`sync error: ${err}`)
+});
 
 const app = express();
 
@@ -20,7 +24,7 @@ app.use('/assets', express.static('assets'));
 
 app.use(express.json());
 
-app.use(indexRoutes);
+app.use('/api/v1/enudiproject/', indexRoutes);
 
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`Project running on port ${PORT}`);

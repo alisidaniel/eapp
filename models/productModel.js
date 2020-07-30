@@ -3,7 +3,7 @@ const sequelize = new Sequelize('sqlite::memory:');
 const User = require('./userModel');
 
 module.exports = (sequelize, DataTypes) => {
-    const productModel = sequelize.define('Product', {
+    const productModel = sequelize.define('Products', {
         title:{
             type: DataTypes.STRING,
             required: true,

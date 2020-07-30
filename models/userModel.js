@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
 
 module.exports = (sequelize, DataTypes) => {
-    const userModel = sequelize.define('User', {
+    const userModel = sequelize.define('Users', {
         firstName:{
             type: DataTypes.STRING,
             required: true,
@@ -19,11 +19,11 @@ module.exports = (sequelize, DataTypes) => {
             required: true,
             allowNull: false
         },
-        // password:{
-        //     type: DataTypes.STRING,
-        //     required: true,
-        //     allowNull: false
-        // }
+        password:{
+            type: DataTypes.STRING,
+            required: true,
+            allowNull: false
+        }
     });
 
     return userModel;
