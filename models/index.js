@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+const basename = path.basename(__filename);
 const Sequelize = require("sequelize");
 const {DB_HOST, DB_USER, DB_NAME, DB_PASS, pool, dialect } = require('../config/config');
 
@@ -17,6 +20,14 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
 
 const db = {};
 
+
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
+
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
@@ -26,11 +37,9 @@ db.Product = require('./productModel.js')(sequelize, Sequelize);
 db.ShippingAddress = require('./shippingAddressModel.js')(sequelize, Sequelize);
 
 
-//# Relationship and Associations 
-
-// db.User.hasMany(db.Product, {as: "Products" });
-// db.Product.belongsTo(db.User, {
-//   foreignKey: "userId", as: "user"
-// });
+//# Model Relationships 
+db.User.hasMany(db.Product, { as: "Product", foreignKey: "userId" });
+db.Product.belongsTo(db.User, { as: "User", foreignKey: "userId" });
+db.ShippingAddress.belongsTo(db.User, { as: "User", foreignKey: "userId" });
 
 module.exports = db;

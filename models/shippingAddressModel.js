@@ -1,8 +1,8 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, DataTypes, Model } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
 
 module.exports = (sequelize, DataTypes) => {
-    const shippingAddress = sequelize.define('ShippingAddress', {
+    const ShippingAddress = sequelize.define('ShippingAddress', {
         address:{
             type: DataTypes.STRING,
             required: true,
@@ -28,5 +28,5 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
-    return shippingAddress;
+    return ShippingAddress;
 }

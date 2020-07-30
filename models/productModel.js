@@ -1,9 +1,8 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
-const User = require('./userModel');
 
 module.exports = (sequelize, DataTypes) => {
-    const productModel = sequelize.define('Products', {
+    const Product = sequelize.define('Product', {
         title:{
             type: DataTypes.STRING,
             required: true,
@@ -25,10 +24,9 @@ module.exports = (sequelize, DataTypes) => {
         },
         price:{
             type: DataTypes.DOUBLE,
-            defaultValue: 0.00,
             allowNull: false
         }
     });
 
-    return productModel;
+    return Product;
 }

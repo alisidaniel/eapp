@@ -1,5 +1,5 @@
-var bcrypt = require('bcrypt');
-var _ = require('lodash');
+const bcrypt = require('bcrypt');
+const _ = require('lodash');
 
 
 const db = require("../models");
@@ -10,7 +10,7 @@ const Op = db.Sequelize.Op;
 const register = async (req, res, next) => {
     try{
         
-        let {email} = req.body;
+        let {email, password} = req.body;
 
         if (!req.body) return res.status(400).send({
           message: "Request body can't be empty!",
@@ -32,11 +32,11 @@ const register = async (req, res, next) => {
       
         let user = new User(_.pick(req.body, ['firstName', 'lastName', 'email', 'password']));
 
-        user.password = await bcrypt.hash(user.password, 12);
+        user.password = await bcrypt.hash(password, bcrypt.genSaltSync(12));
 
         await user.save();
 
-        return res.json({user});
+        return res.status(200).json({user});
 
     }catch(e){
         next(e);
@@ -44,6 +44,7 @@ const register = async (req, res, next) => {
 }
 
 const login = async (req, res, next) => {
+
     try{
 
       let {email, password} = req.body;
@@ -56,26 +57,34 @@ const login = async (req, res, next) => {
       let user = await User.findOne({where: {email: email}});
     
       if (user == null) return res.status(400).json({
-        message: 'Invalid email or password.',
+        message: 'Invalid email or password null.',
         status: false
       });
 
-      const isValidPwd = await bcrypt.compare(password, user.dataValues.password);
-   
+      const isValidPwd = bcrypt.compareSync(password, user.dataValues.password);
+    
       if (!isValidPwd) return res.status(400).json({
         message: 'Invalid email or password.',
         success: false
       });
-
-      return res.status(200).json({user});
+      
+      return res.status(200).json(user);
 
     }catch(e){
       next(e);
     }
 }
 
-const edit = (req, res, next) => {
+const edit = async (req, res, next) => {
+  try{
+    let {firstName, lastName, phone} = req.body;
+    const user = await User.update({
+      firstName: firstName, lastName: lastName, phone: phone
+    },{ where: {id: id}});
 
+  }catch(e){
+    next(e);
+  }
 }
 
 const passwordReset = (req, res, next) => {

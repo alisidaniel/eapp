@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
 
 module.exports = (sequelize, DataTypes) => {
-    const userModel = sequelize.define('Users', {
+    const User = sequelize.define('User', {
         firstName:{
             type: DataTypes.STRING,
             required: true,
@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         email:{
             type: DataTypes.STRING,
             unique: true,
+            isEmail: true,
             required: true,
             allowNull: false
         },
@@ -26,5 +27,5 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
-    return userModel;
+    return User;
 }
