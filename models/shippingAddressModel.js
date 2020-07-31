@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
         country:{
             type: DataTypes.STRING,
             allowNull: false
+        },
+        deleted:{
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
     });
 

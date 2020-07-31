@@ -24,6 +24,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             required: true,
             allowNull: false
+        },
+        active:{
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        isAdmin:{
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
         }
     });
 

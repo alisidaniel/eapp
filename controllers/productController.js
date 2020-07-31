@@ -7,7 +7,6 @@ const Op = db.Sequelize.Op;
 const create = async (req, res, next) => {
     try{
 
-        console.log(req.body)
         let newItem =  new Product({...req.body});
          
         await newItem.save();
@@ -19,14 +18,51 @@ const create = async (req, res, next) => {
     }
 }
 
-const edit = (req, res, next) => {
+const show = async (req, res, next) => {
+
+    try{
+        let data = await Product.findAll({where:{userId: req.body.params}});
+
+        return res.status(200).json({data});
+
+    }catch(e){
+        next(e);
+    }
+}
+
+const udpate = async (req, res, next) => {
+
+    try{
+        let data = await Product.udpate({...req.body}, {
+            where: {
+                userId: req.body.params
+            }
+        });
+
+        return res.status(200).json({data});
+
+    }catch(e){
+
+        next(e);
+    }
 
 }
 
-const deleteProduct = (req, res, next) => {
+const deleteRecord = async (req, res, next) => {
+
+    try{
+        let data = await Product.udpate({deleted: true}, {
+            where:{
+                userId: req.body.params
+            }
+        })
+
+    }catch(e){
+        next(e);
+    }
 
 }
 
 module.exports = {
-    create, edit, deleteProduct
+    create, udpate, show, deleteRecord
 }

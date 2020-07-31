@@ -35,11 +35,23 @@ db.sequelize = sequelize;
 db.User = require('./userModel.js')(sequelize, Sequelize);
 db.Product = require('./productModel.js')(sequelize, Sequelize);
 db.ShippingAddress = require('./shippingAddressModel.js')(sequelize, Sequelize);
+db.Cart = require('./cartModels')(sequelize, Sequelize);
+db.Order = require('./orderModels')(sequelize, Sequelize);
+db.Category = require('./categoryModel')(sequelize, Sequelize);
 
 
 //# Model Relationships 
 db.User.hasMany(db.Product, { as: "Product", foreignKey: "userId" });
 db.Product.belongsTo(db.User, { as: "User", foreignKey: "userId" });
+
+db.User.hasOne(db.ShippingAddress, { as: "ShippingAddress", foreignKey: "userId"});
 db.ShippingAddress.belongsTo(db.User, { as: "User", foreignKey: "userId" });
+
+//Order relation
+db.User.hasMany(db.Order, { as: "Order", foreignKey: "userId" });
+db.Order.belongsTo(db.User, { as: "User", foreignKey: "userId" });
+
+//Cart relations
+db.Cart.belongsTo(db.User, { as: "User", foreignKey: "userId"});
 
 module.exports = db;

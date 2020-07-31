@@ -25,6 +25,22 @@ module.exports = (sequelize, DataTypes) => {
         price:{
             type: DataTypes.DOUBLE,
             allowNull: false
+        },
+        stock:{
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        deliveryTime:{ //in hours
+            type: DataTypes.BIGINT,
+            allowNull: true
+        },
+        status:{ //1 is active 2 is closed
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        deleted:{
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
     });
 
