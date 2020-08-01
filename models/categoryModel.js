@@ -11,12 +11,6 @@ module.exports = (sequelize, DataTypes) => {
         },
         subcategory:{
             type: DataTypes.TEXT,
-            get: function (){
-                return  JSON.parse(this.getDataValue("slug"));
-            },
-            set: function(value) {
-                return this.setDataValue("slug", JSON.stringify(value));
-            }
         }
 
     });

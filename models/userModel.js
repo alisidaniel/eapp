@@ -3,27 +3,19 @@ const sequelize = new Sequelize('sqlite::memory:');
 
 module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define('User', {
-        firstName:{
+        username:{
             type: DataTypes.STRING,
             required: true,
-            allowNull: false
-        },
-        lastName:{
-            type: DataTypes.STRING,
-            required: true,
-            allowNull: false
         },
         email:{
             type: DataTypes.STRING,
             unique: true,
             isEmail: true,
             required: true,
-            allowNull: false
         },
         password:{
             type: DataTypes.STRING,
             required: true,
-            allowNull: false
         },
         active:{
             type: DataTypes.BOOLEAN,

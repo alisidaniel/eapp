@@ -1,0 +1,91 @@
+
+<%- include('layouts/header') %>
+
+<%- include('layouts/nav') %>
+<div class="container">
+	<div class="row">
+		<div class="col-lg-8 offset-2">
+            <p><b>Add product</b></p>
+            <form class="form" method="POST" action="/product" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Title</label>
+					<input type="text" name="title" class="form-control" required placeholder="Product name">
+                </div>
+                <div class="form-group">
+                    <label for="Category">Category</label>
+					<select class="form-control" name="category" id="Category" required>
+                        <option>1</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Subcategory</label>
+					<select class="form-control" name="subcategory" required>
+                        <option>1</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+					<input type="number" name="price" class="form-control" required placeholder="Numbers of item(s)">
+                </div>
+                <div class="form-group">
+                    <label>In Stock</label>
+					<input type="number" name="stock" class="form-control" required placeholder="Numbers of item(s)">
+                </div>
+                <div class="form-group">
+                    <label>Delivery date</label>
+					<select class="form-control" name="deliveryTime" required>
+                        <option>1 - 2 week(s)</option>
+                        <option>2 - 3 weeks</option>
+                        <option>3 - 4 weeks</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Images</label>
+                    <input type="file" name="imageFile" multiple required id="imageFilePick" accept="image/*">
+                    <hr />
+                      <div class="row">
+                        <div class="col-md-">
+                          <div class="preview-images"></div>
+                        </div>
+                      </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+					<textarea type="text" name="description" required class="form-control" required placeholder="Description"></textarea>
+                </div>
+                <div class="form-group">
+					<button class="site-btn" type="submit">Upload</button>
+                </div>
+            </form>
+		</div>
+	</div>
+</div>
+
+<%- include('layouts/footer') %>
+
+<script>
+  $(document).ready(function() {
+    let imagesPreview = function(input, placeToInsertImagePreview) {
+      if (input.files) {
+        let filesAmount = input.files.length;
+        for (i = 0; i < filesAmount; i++) {
+          let reader = new FileReader();
+          reader.onload = function(event) {
+            $($.parseHTML("<img class='img-thumbnail' width='100' height='100'>"))
+              .attr("src", event.target.result)
+              .appendTo(placeToInsertImagePreview);
+          };
+          reader.readAsDataURL(input.files[i]);
+        }
+      }
+    };
+    $("#imageFilePick").on("change", function() {
+      imagesPreview(this, "div.preview-images");
+    });
+  });
+</script>
+
+
+</body>
+
+</html>

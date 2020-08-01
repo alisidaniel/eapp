@@ -1,0 +1,64 @@
+<%- include('layouts/header') %>
+
+<%- include('layouts/nav') %>
+
+<div class="container">
+	<div class="row">
+		<div class="col-lg-6 offset-3">
+            <form class="form" method="POST" action="/category">
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <input type="text" name="category" class="form-control" id="category"/>
+                </div>
+                <div class="form-group">
+                    <label for="subcategory">Subcategory</label>
+                    <input type="text" class="form-control" name="subcategory"/>
+                    <div class="newsub">
+
+                    </div>
+                    <button class="btn btn-warning text-white mt-2 ml-auto addNew">+ Add new subcategory </button>
+                </div>
+                <div class="form-group">
+                    <button class="btn site-btn " type="submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('layouts/footer') %>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var max_fields = 10;
+    var wrapper = $(".newsub");
+    var add_button = $(".addNew");
+
+    var x = 1;
+    var newArray = new Array();
+    $(add_button).click(function(e) {
+        e.preventDefault();
+        if (x < max_fields) {
+            x++;
+            $(wrapper).append('<div><input type="text" class="form-control mb-2 mt-3" placeholder="Add item" name="subcategory"/><a href="#" class="delete">Delete</a></div>'); //add input box
+        } else {
+            alert('You Reached the limits')
+        }
+    });
+
+    $("input:text[name=subcategory]").each(function(){
+        newArray.push($(this));
+    });
+
+    $(wrapper).on("click", ".delete", function(e) {
+        e.preventDefault();
+        $(this).parent('div').remove();
+        x--;
+    })
+});
+</script>
+
+
+</body>
+
+</html>

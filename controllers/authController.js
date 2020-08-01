@@ -9,7 +9,7 @@ const Op = db.Sequelize.Op;
 
 const register = async (req, res, next) => {
     try{
-        
+        console.log(req.body)
         let {email, password} = req.body;
 
         if (!req.body) return res.status(400).send({
@@ -39,7 +39,7 @@ const register = async (req, res, next) => {
         return res.status(200).json({user});
 
     }catch(e){
-        next(e);
+         throw Error(e);
     }
 }
 
@@ -57,7 +57,7 @@ const login = async (req, res, next) => {
       let user = await User.findOne({where: {email: email}});
     
       if (user == null) return res.status(400).json({
-        message: 'Invalid email or password null.',
+        message: 'User does not exist.',
         status: false
       });
 

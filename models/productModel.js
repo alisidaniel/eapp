@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
             required: true,
             allowNull: false
         },
-        imagePath: {
+        images: {
             type: DataTypes.STRING
         },
         category:{

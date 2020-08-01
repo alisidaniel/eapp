@@ -1,0 +1,28 @@
+
+<%- include('layouts/header') %>
+
+<%- include('layouts/nav') %>
+<div class="container">
+	<div class="row">
+		<div class="col-lg-6 offset-3">
+			<form class="form" method="POST" action="/login">
+				<p><b>Login</b></p>
+				<div class="form-group">
+					<input type="email" name="email" class="form-control" required placeholder="Enter Email">
+				</div>
+				<div class="form-group">
+					<input type="password" name="password" class="form-control" required placeholder="Enter Password">
+				</div>
+				<div class="form-group">
+					<button type="submit" class="site-btn">Login</button>
+				</div>
+
+				<div class="form-group text-center">
+					<p>Don't have an account  <a href="/register">register</a></p>
+					<p>Forgot password click  <a href="#">here</a></p>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<%- include('layouts/footer') %>
