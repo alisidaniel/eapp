@@ -3,7 +3,7 @@ const sequelize = new Sequelize('sqlite::memory:');
 
 module.exports = (sequelize, DataTypes) => {
 
-    const Cart = sequelize.define('Cart', { 
+    const CartItem = sequelize.define('CartItem', { 
         
         totalPrice:{
             type: DataTypes.FLOAT,
@@ -15,6 +15,6 @@ module.exports = (sequelize, DataTypes) => {
 
     });
 
-    return Cart;
+    return CartItem;
 
 }
