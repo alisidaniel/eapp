@@ -8,15 +8,41 @@ const uploadFiles = require("../middleware/imageMiddleware");
 
 const create = async (req, res, next) => {
     try{
+        await uploadFiles(req, res);
 
-        let newItem =  new Product({...req.body});
+        var imageFileName = [];
+
+        req.files.forEach(file => {
+            imageFileName.push(file.filename);
+        });
+
+        //JSON.stringify to encode to string and send to sever, use JSON.parse to convert to array from server
+        let data = JSON.stringify(imageFileName);
+  
+        if (req.files.length <= 0) {
+          return res.send(`You must select at least 1 file.`);
+        }
+
+        let newItem =  new Product({
+            title: req.body.title,
+            category: req.body.category,
+            subcategory: req.body.subcategory,
+            description: req.body.description,
+            price: req.body.price,
+            stock: req.body.stock,
+            deliveryTime: req.body.deliveryTime,
+            images: data
+        });
          
         await newItem.save();
 
         return res.status(200).json({newItem});
 
     }catch(e){
-        next(e);
+        if (error.code === "LIMIT_UNEXPECTED_FILE") {
+            return res.send("Too many files to upload.");
+        }
+        return res.send(`Error when trying upload many files: ${error}`);
     }
 }
 
@@ -94,29 +120,7 @@ const postCategory = async (req, res, next) => {
 }
 
 
-const productUpload = async (req, res, next) => {
-
-    try {
-        await uploadFiles(req, res);
-        console.log(req.files);
-    
-        if (req.files.length <= 0) {
-          return res.send(`You must select at least 1 file.`);
-        }
-    
-        return res.send(`Files has been uploaded.`);
-      } catch (error) {
-        console.log(error);
-    
-        if (error.code === "LIMIT_UNEXPECTED_FILE") {
-          return res.send("Too many files to upload.");
-        }
-        return res.send(`Error when trying upload many files: ${error}`);
-      }
-
-}
-
 module.exports = {
     
-    create, udpate, show, deleteRecord, postCategory, productUpload
+    create, udpate, show, deleteRecord, postCategory
 }

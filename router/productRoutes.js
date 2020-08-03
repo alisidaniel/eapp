@@ -1,9 +1,9 @@
 const express = require('express');
-const {create, postCategory, productUpload} = require('../controllers/productController');
+const {create, postCategory} = require('../controllers/productController');
 
 const router = express.Router();
 
-router.post('/product', productUpload, function(req, res, next){
+router.post('/product', create, function(req, res, next){
     res.send(res.data);
 });
 

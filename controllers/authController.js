@@ -30,13 +30,15 @@ const register = async (req, res, next) => {
           status:false
         });
       
-        let user = new User(_.pick(req.body, ['firstName', 'lastName', 'email', 'password']));
+        let user = new User(_.pick(req.body, ['username', 'email', 'password']));
 
         user.password = await bcrypt.hash(password, bcrypt.genSaltSync(12));
 
         await user.save();
 
-        return res.status(200).json({user});
+        const token = await user.generateAuthToken();
+    
+        res.header("x-auth-token", token).send(user);
 
     }catch(e){
          throw Error(e);
@@ -67,8 +69,10 @@ const login = async (req, res, next) => {
         message: 'Invalid email or password.',
         success: false
       });
+
+      const token = await user.generateAuthToken();
       
-      return res.status(200).json(user);
+      return res.header('x-access-token', token).render('home', {data: user});
 
     }catch(e){
       next(e);

@@ -1,6 +1,10 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
 
+const Joi = require('joi');
+const jwt = require('jsonwebtoken');
+const {TOKEN_KEY}  = require('../config/config');
+
 module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define('User', {
         username:{
@@ -26,6 +30,13 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: false,
         }
     });
+
+    User.prototype.generateAuthToken = function (){
+        const token = jwt.sign({id: this.id, isAdmin: this.isAdmin}, TOKEN_KEY, {
+            expiresIn: '1h'
+        });
+        return  token;
+    }
 
     return User;
 }
