@@ -21,6 +21,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             required: true,
         },
+        phone:{
+            type: DataTypes.STRING,
+            required: true
+        },
+        address:{
+            type: DataTypes.STRING,
+            required: true
+        },
         active:{
             type: DataTypes.BOOLEAN,
             defaultValue: false
