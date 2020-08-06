@@ -3,8 +3,11 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
-var {PORT, PRIVATE_KEY} = require('./config/config');
 var session = require('express-session');
+var flash = require('express-flash');
+
+var {PORT, PRIVATE_KEY} = require('./config/config');
+
 
 var indexRoutes = require('./router/indexRoutes');
 var productRoutes = require('./router/productRoutes');
@@ -25,6 +28,7 @@ app.use('/assets', express.static('assets'));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser());
+app.use(flash());
 
 // initialize express-session to allow us track the logged-in user across sessions.
 app.use(session({

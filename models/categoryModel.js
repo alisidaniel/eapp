@@ -11,7 +11,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         subcategory:{
             type: DataTypes.TEXT,
-        }
+        },
+        image: {
+            type: DataTypes.STRING
+        },
 
     });
 

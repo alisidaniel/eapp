@@ -26,7 +26,7 @@ const create = async (req, res, next) => {
         let newItem =  new Product({
             title: req.body.title,
             category: req.body.category,
-            subcategory: req.body.subcategory,
+            subcategory: req.body.subcategory[0],
             description: req.body.description,
             price: req.body.price,
             stock: req.body.stock,
@@ -36,13 +36,13 @@ const create = async (req, res, next) => {
          
         await newItem.save();
 
-        return res.status(200).json({newItem});
+        return res.redirect('/product');
 
     }catch(e){
-        if (error.code === "LIMIT_UNEXPECTED_FILE") {
-            return res.send("Too many files to upload.");
+        if (e.code === "LIMIT_UNEXPECTED_FILE") {
+            return res.json("Too many files to upload.");
         }
-        return res.send(`Error when trying upload many files: ${error}`);
+        return res.send(`Error when trying upload many files: ${e}`);
     }
 }
 
@@ -102,19 +102,37 @@ const deleteRecord = async (req, res, next) => {
 const postCategory = async (req, res, next) => {
 
     try{
+
+        await uploadFiles(req, res);
+
+        var imageFileName = [];
+
+        req.files.forEach(file => {
+            imageFileName.push(file.filename);
+        });
+
+        //JSON.stringify to encode to string and send to sever, use JSON.parse to convert to array from server
+        let imageData = JSON.stringify(imageFileName);
+
+        if (req.files.length <= 0) {
+            return res.send(`You must select at least 1 file.`);
+          }
    
         if ( req.body.subcategory instanceof Array ){
            var newcategory = req.body.subcategory.toString();
         }
         
+        
         let data = await Category.create({
             name: req.body.category,
-            subcategory: newcategory ? newcategory : req.body.subcategory 
+            subcategory: newcategory ? newcategory : req.body.subcategory,
+            image: imageData 
         });
 
-        return res.status(200).json(data);
+        return res.redirect('/category');
     
     }catch(e){
+
         throw new Error("Something bad occured."+e)
     }
 }

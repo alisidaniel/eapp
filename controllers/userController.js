@@ -21,7 +21,7 @@ const updateRecord = async (req, res, next) => {
                 id: id
             }
         });
-
+        req.flash('info', 'Welcome');
         res.redirect('/profile');
     }catch(e){
         throw new Error("Error occured: "+e);

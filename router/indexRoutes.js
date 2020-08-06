@@ -4,6 +4,11 @@ var {login, register} = require('../controllers/authController');
 var {account, updateRecord} = require('../controllers/userController');
 var {sessionChecker} = require('../middleware/auth');
 
+
+const db = require('../models');
+const Category = db.Category;
+const Product  = db.Product;
+
 var router = express.Router();
 
 /* GET authentication page. */
@@ -22,12 +27,17 @@ router.get('/login', function(req, res, next){
 
 
 /* GET home page. */
-router.get('/', function(req, res, next){
-    res.render('index');
+router.get('/', async function(req, res, next) {
+    let categoryData = await Category.findAll();
+    
+    res.render('index', {categories: categoryData});
 });
 
-router.get('/index', function(req, res, next){
-    res.render('index');
+router.get('/index', async function(req, res, next){ 
+    let categoryData = await Category.findAll();
+    let productData = await Product.findAll();
+    // console.log(JSON.stringify(categoryData));
+    res.render('index', {categories: categoryData, products: productData});
 });
 
 router.get('/account', sessionChecker, account);
