@@ -8,6 +8,7 @@ var {sessionChecker} = require('../middleware/auth');
 const db = require('../models');
 const Category = db.Category;
 const Product  = db.Product;
+const Op = db.Sequelize.Op;
 
 var router = express.Router();
 
@@ -48,18 +49,41 @@ router.get('/profile', sessionChecker, function(req, res, next){
     res.render('profile', {data: req.session.user});
 });
 
-router.post('/profile', sessionChecker, updateRecord);
+router.post('/profile', updateRecord);
 
 router.get('/about', function(req, res, next){
     res.render('about');
 });
 
-router.get('/shop-details', sessionChecker, function(req, res, next){
-    res.render('shop-details');
+router.get('/product-details', async function(req, res, next){
+
+    let data = await Product.findByPk(req.query.id);
+
+    let relatedItem = await Product.findAll({
+        where:{
+            subcategory:{
+                [Op.like]: `%${data.dataValues.subcategory}`
+            }
+        }
+    })
+    
+    res.render('product-details', {product: data, relatedItem: relatedItem});
 });
 
-router.get('/shop-grid', function(req, res, next){
-    res.render('shop-grid');
+router.get('/product-list', async function(req, res, next){
+    let categoryData = await Category.findOne({
+        where:{
+            name:{
+                [Op.like]: req.query.category
+            }
+        }
+    });
+    console.log(categoryData)
+    res.render('product-list', {categories: categoryData});
+});
+
+router.get('/product-search', function(req, res, next){
+    res.render('product-search');
 });
 
 router.get('/shoping-cart', function(req, res, next){

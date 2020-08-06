@@ -24,6 +24,4 @@ router.post('/category', postCategory, function(req, res, next){
 });
 
 
-
-
 module.exports = router;

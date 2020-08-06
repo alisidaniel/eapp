@@ -33,6 +33,15 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: true
         },
+        color:{
+            type: DataTypes.STRING,
+        },
+        brand:{
+            type: DataTypes.STRING,
+        },
+        size:{
+            type: DataTypes.STRING,
+        },
         deliveryTime:{ //in hours
             type: DataTypes.BIGINT,
             allowNull: true

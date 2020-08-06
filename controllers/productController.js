@@ -22,13 +22,20 @@ const create = async (req, res, next) => {
         if (req.files.length <= 0) {
           return res.send(`You must select at least 1 file.`);
         }
-
+        if (Array.isArray(req.body.subcategory)){
+            
+            return res.send("Don't select more than one subcategory.");
+        }
+        
         let newItem =  new Product({
             title: req.body.title,
             category: req.body.category,
-            subcategory: req.body.subcategory[0],
+            subcategory: req.body.subcategory,
             description: req.body.description,
             price: req.body.price,
+            brand: req.body.brand,
+            Size: req.body.size,
+            color: req.body.color,
             stock: req.body.stock,
             deliveryTime: req.body.deliveryTime,
             images: data
@@ -102,31 +109,14 @@ const deleteRecord = async (req, res, next) => {
 const postCategory = async (req, res, next) => {
 
     try{
-
-        await uploadFiles(req, res);
-
-        var imageFileName = [];
-
-        req.files.forEach(file => {
-            imageFileName.push(file.filename);
-        });
-
-        //JSON.stringify to encode to string and send to sever, use JSON.parse to convert to array from server
-        let imageData = JSON.stringify(imageFileName);
-
-        if (req.files.length <= 0) {
-            return res.send(`You must select at least 1 file.`);
-          }
    
         if ( req.body.subcategory instanceof Array ){
            var newcategory = req.body.subcategory.toString();
         }
         
-        
         let data = await Category.create({
             name: req.body.category,
-            subcategory: newcategory ? newcategory : req.body.subcategory,
-            image: imageData 
+            subcategory: newcategory ? newcategory : req.body.subcategory 
         });
 
         return res.redirect('/category');

@@ -12,7 +12,7 @@
                         </div>
                         <ul>
                             <% for (let i = 0; i < categories.length; i++){ %>
-                             <li><a href="#"><%= categories[i].dataValues.name %></a></li>
+                             <li><a href="/product-list?category=<%=categories[i].dataValues.name%>"><%= categories[i].dataValues.name %></a></li>
                             <% } %>
                         </ul>
                     </div>
@@ -41,9 +41,9 @@
                     </div>
                     <div class="hero__item set-bg" data-setbg="/assets/img/hero/landing_page.jpeg">
                         <div class="hero__text">
-                          <!--   <span>FRUIT FRESH</span>
+                            <span>FRUIT FRESH</span>
                             <h2>Vegetable <br />100% Organic</h2>
-                            <p>Free Pickup and Delivery Available</p> -->
+                            <p>Free Pickup and Delivery Available</p>
                             <a href="#" class="primary-btn">SHOP NOW</a>
                         </div>
                     </div>
@@ -54,26 +54,7 @@
     <!-- Hero Section End -->
 
     <!-- Categories Section Begin -->
-    <section class="categories">
-        <div class="container">
-            <div class="row">
-                <div class="categories__slider owl-carousel">
-                    
-                <% if (products.length > 0) {
-                    for (var i = 0; i < products.length; i++) { 
-                        var images = JSON.parse(products[i].dataValues.images);
-                        var newImages = images[0]; 
-                %> 
-                    <div class="col-lg-3">
-                        <div class="categories__item set-bg" data-setbg="/assets/uploads/<%=newImages%>">
-                            <h5><a href="#"><%= products[i].dataValues.category %></a></h5>
-                        </div>
-                    </div>
-                 <% } } %>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!--  -->
     <!-- Categories Section End -->
 
     <!-- Featured Section Begin -->
@@ -100,17 +81,14 @@
             </div>
             <div class="row featured__filter">
              <% for (var i = 0; i < products.length; i++) {
-
               var images = JSON.parse(products[i].dataValues.images);
               var newImages = images[0]; 
-
               %>
                 <div class="col-lg-3 col-md-4 col-sm-6 mix <%= products[i].dataValues.category %> fresh-meat">
                     <div class="featured__item">
                         <div class="featured__item__pic set-bg" data-setbg="/assets/uploads/<%=newImages%>">
                             <ul class="featured__item__pic__hover">
-                                <li><a href="#"><i class="fa fa-heart"></i></a></li>
-                                <li><a href="#"><i class="fa fa-retweet"></i></a></li>
+                                <li><a href="/product-details?id=<%= products[i].dataValues.id %>"><i class="fa fa-retweet"></i></a></li>
                                 <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
                             </ul>
                         </div>
