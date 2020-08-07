@@ -5,14 +5,18 @@ module.exports = (sequelize, DataTypes) => {
 
     const Cart = sequelize.define('Cart', { 
         
-        totalPrice:{
-            type: DataTypes.FLOAT,
+        unitPrice:{
+            type: DataTypes.FLOAT
         },
-
+        totalPrice:{
+            type: DataTypes.FLOAT
+        },
         totalQty:{
-            type: DataTypes.FLOAT,
+            type: DataTypes.INTEGER,
+        },
+        userId:{
+            type: DataTypes.STRING
         }
-
     });
 
     return Cart;

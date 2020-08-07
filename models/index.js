@@ -38,7 +38,6 @@ db.ShippingAddress = require('./shippingAddressModel.js')(sequelize, Sequelize);
 db.Cart = require('./cartModels')(sequelize, Sequelize);
 db.Order = require('./orderModels')(sequelize, Sequelize);
 db.Category = require('./categoryModel')(sequelize, Sequelize);
-db.CartItem = require('./cartItemModel')(sequelize, Sequelize);
 
 
 //# Model Relationships 
@@ -54,10 +53,7 @@ db.User.hasMany(db.Order, { as: "Order", foreignKey: "userId" });
 db.Order.belongsTo(db.User, { as: "User", foreignKey: "userId" });
 
 //Cart relations
-db.Cart.belongsTo(db.User, { as: "User", foreignKey: "userId"});
-
-//CartItem 
-db.CartItem.belongsTo(db.Cart, { as: 'Cart', foreignKey: "cartItemId"});
-db.CartItem.belongsTo(db.Product, { as: 'Product', foreignKey: "productId"});
+// db.Cart.belongsTo(db.User, { as: "User", foreignKey: "userId"});
+db.Cart.belongsTo(db.Product, { as: 'Product', foreignKey: "productId"});
 
 module.exports = db;

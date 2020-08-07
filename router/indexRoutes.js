@@ -8,6 +8,7 @@ var {sessionChecker} = require('../middleware/auth');
 const db = require('../models');
 const Category = db.Category;
 const Product  = db.Product;
+const Cart = db.Cart;
 const Op = db.Sequelize.Op;
 
 var router = express.Router();
@@ -30,8 +31,9 @@ router.get('/login', function(req, res, next){
 /* GET home page. */
 router.get('/', async function(req, res, next) {
     let categoryData = await Category.findAll();
+    let productData = await Product.findAll();
     
-    res.render('index', {categories: categoryData});
+    res.render('index', {categories: categoryData, products: productData});
 });
 
 router.get('/index', async function(req, res, next){ 
@@ -41,7 +43,12 @@ router.get('/index', async function(req, res, next){
     res.render('index', {categories: categoryData, products: productData});
 });
 
-router.get('/account', sessionChecker, account);
+router.get('/account', sessionChecker, async function(req, res, next){
+    let categoryData = await Category.findAll();
+    let productData = await Product.findAll();
+
+    res.render('account', {categories: categoryData, products: productData, data: req.session.user});
+});
 
 /* profile page. */
 router.get('/profile', sessionChecker, function(req, res, next){
@@ -71,24 +78,122 @@ router.get('/product-details', async function(req, res, next){
 });
 
 router.get('/product-list', async function(req, res, next){
+    let { subcategory, category } = req.query;
     let categoryData = await Category.findOne({
         where:{
             name:{
-                [Op.like]: req.query.category
+                [Op.like]: `%${category}`
             }
         }
     });
-    console.log(categoryData)
-    res.render('product-list', {categories: categoryData});
+
+    let searchquery = await Product.findAll({
+        where:{
+            
+            subcategory:{
+                [Op.like]: subcategory === undefined ? `%${category}` : `%${subcategory}`
+            }
+        }
+    });
+
+    let latest = await Product.findAll({
+        where:{
+            category:{
+                [Op.like]: `%${category}`
+            }
+        },
+        order: [
+            ['id', 'DESC']
+        ],
+
+        limit: 10
+    });
+
+    res.render('product-list', {categories: categoryData, product: searchquery, newProducts: latest});
 });
 
-router.get('/product-search', function(req, res, next){
-    res.render('product-search');
+router.get('/product-search', async function(req, res, next){
+
+        let {search} = req.body;
+
+        let searchquery = await Product.findAll({
+            where:{
+                [Op.or]: [
+                    {
+                        title:{
+                            [Op.like]: `%${search}`
+                        }
+                    },
+                    {
+                        category:{
+                            [Op.like]: `%${search}`
+                        }
+                    },
+                    {
+                        brand:{
+                            [Op.like]: `%${search}`
+                        }
+                    },{
+                        subcategory:{
+                            [Op.like]: `%${search}`
+                        }
+                    }
+                ]
+            },
+            order: [
+                ['id', 'DESC']
+            ],
+    
+            limit: 10
+        });
+        console.log(searchquery)
+    res.render('product-search', {product: searchquery});
 });
 
-router.get('/shoping-cart', function(req, res, next){
+router.get('/shoping-cart', async function(req, res, next){
+
+    //Add to cart
+    let { productId, qty, price} = req.query;
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+    let quantity = qty === undefined ? 1 : qty;
+
+    let itemExist = await Cart.findOne({
+        where:{
+            [Op.and]:[
+                { userId: userId },
+                { productId: productId }
+            ]
+        }
+    });
+    
+    let newCartItem = new Cart({
+        userId: userId,
+        productId: productId,
+        totalQty: quantity,
+        unitPrice: price,
+        totalPrice: price * quantity
+    });
+
+    if (itemExist === undefined || itemExist == null){
+        console.log("got here")
+        console.log(itemExist)
+        await newCartItem.save();
+    }
+
+    if (itemExist){
+        
+        let updateCart = await Cart.update({ totalQty: quantity, totalPrice: price * quantity},
+          {
+            where:{
+                id: itemExist.id
+            }
+        });
+    }
+
+    console.log(itemExist);
     res.render('shoping-cart');
 });
+
 
 router.get('/checkout', function(req, res, next){
     res.render('checkout');

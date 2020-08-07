@@ -41,9 +41,9 @@
                     </div>
                     <div class="hero__item set-bg" data-setbg="/assets/img/hero/landing_page.jpeg">
                         <div class="hero__text">
-                            <span>FRUIT FRESH</span>
+           <!--                  <span>FRUIT FRESH</span>
                             <h2>Vegetable <br />100% Organic</h2>
-                            <p>Free Pickup and Delivery Available</p>
+                            <p>Free Pickup and Delivery Available</p> -->
                             <a href="#" class="primary-btn">SHOP NOW</a>
                         </div>
                     </div>
@@ -89,7 +89,11 @@
                         <div class="featured__item__pic set-bg" data-setbg="/assets/uploads/<%=newImages%>">
                             <ul class="featured__item__pic__hover">
                                 <li><a href="/product-details?id=<%= products[i].dataValues.id %>"><i class="fa fa-retweet"></i></a></li>
-                                <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                                <li>
+                                    <a class="add_to_cart" id="add_to_cart" data-price="<%= products[i].dataValues.price %>" data-id="<%= products[i].dataValues.id %>" type="button">
+                                        <i class="fa fa-shopping-cart"></i>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                         <div class="featured__item__text">
@@ -105,6 +109,32 @@
     <!-- Featured Section End -->
 
 <%- include('layouts/footer') %>
+
+<script type="text/javascript">
+    $(document).ready(function(e) {
+        
+        //Increase
+        $(".add_to_cart").on("click", function(){
+
+            var prodId = $(this).data("id");
+            var price = $(this).data("price");
+
+            $.ajax({
+                url: "/shoping-cart",
+                type: "GET",
+                data: {productId: prodId, price: price},
+                success: function(data) {
+                    // Do stuff when the AJAX call returns
+                    alert("hi"+ price);
+                },
+                error: function(e){
+                    console.log(e);
+                }
+            });
+        });
+
+    });
+</script>
 
 </body>
 

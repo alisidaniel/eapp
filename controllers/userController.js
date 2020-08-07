@@ -5,7 +5,11 @@ const User = db.User;
 const account = async (req, res, next) => {
     try{
         // let user = await User.findByPk(req.user.id);
-        res.render('account', {data: req.session.user});
+
+        let categoryData = await Category.findAll();
+        let productData = await Product.findAll();
+
+        res.render('account', {data: req.session.user, categories: categoryData, products: productData});
  
     }catch(e){
         res.render('login');

@@ -27,7 +27,7 @@ const register = async (req, res, next) => {
         user.password = await bcrypt.hash(password, bcrypt.genSaltSync(12));
 
         await user.save();
-        res.flash(`Welcome ${user.dataValues.username}`);
+        
         req.session.user = user.dataValues;
 
         res.redirect('/account');
