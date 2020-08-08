@@ -8,15 +8,9 @@
                             <span>All categories</span>
                         </div>
                         <ul>
-                            <li><a href="#">Home & Office </a></li>
-                            <li><a href="#">Electronics</a></li>
-                            <li><a href="#">Fashion</a></li>
-                            <li><a href="#">Phone & Tablets</a></li>
-                            <li><a href="#">Automobile</a></li>
-                            <li><a href="#">Health & Beauty</a></li>
-                            <li><a href="#">Computing</a></li>
-                            <li><a href="#">Baby Products</a></li>
-                            <li><a href="#">Gaming</a></li>
+                            <% for (let i = 0; i < categories.length; i++){ %>
+                             <li><a href="/product-list?category=<%=categories[i].dataValues.name%>"><%= categories[i].dataValues.name %></a></li>
+                            <% } %>
                         </ul>
                     </div>
                 </div>

@@ -12,7 +12,7 @@
                     <div class="product__details__pic">
                         <div class="product__details__pic__item">
                             <%  var images = JSON.parse(product.dataValues.images);
-                                var newImages = images[0];
+                                var newImages  = images[0];
                                 var newImages1 = images[1];
                                 var newImages2 = images[2];
                                 var newImages3 = images[3];
@@ -41,17 +41,37 @@
                             <i class="fa fa-star-half-o"></i>
                             <span>(18 reviews)</span>
                         </div>
-                        <div class="product__details__price">₦ <%= product.dataValues.price.toLocaleString() %></div>
-                        <p> </p>
+                        <div class="product__details__price">
+                            <input type="hidden" id="price" value="<%= product.dataValues.price %>">
+                            <input type="hidden" id="prodId" value="<%= product.dataValues.id %>">
+                            <a>
+                                ₦ <%= product.dataValues.price.toLocaleString() %>
+                            </a>
+                        </div>
+              
                         <div class="product__details__quantity">
                             <div class="quantity">
                                 <div class="pro-qty">
-                                    <input type="text" value="1">
+                                    <input type="text" value="1" id="qty">
                                 </div>
                             </div>
                         </div>
-                        <a href="#" class="primary-btn">ADD TO CARD</a>
-                        <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
+
+                        <% if (cartExist < 1) { %> 
+
+                        <button type="button" class="primary-btn addToCart">
+                            <span class="text-white" id="addToCart">Add to Cart</span>
+                        </button>
+
+                        <% } else { %>
+
+                        <a type="button" class="primary-btn">
+                            <span class="text-white" >Added</span>
+                        </a>
+
+                        <% } %>
+
+                        <!-- <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a> -->
                         <ul>
                             <li><b>Availability</b> <span> <%= product.dataValues.stock %> In Stock</span></li>
                             <li><b>Shipping</b> <span> <%= product.dataValues.deliveryTime %> Weeks <samp>Free pickup today within Nigeria.</samp></span></li>
@@ -127,6 +147,36 @@
     <!-- Related Product Section End -->
 
 <%- include('layouts/footer') %>
+
+
+<script type="text/javascript">
+    $(document).ready(function(e) {
+        
+        //Increase
+        $(".addToCart").on("click", function(){
+
+            var prodId = $("#prodId").val();
+            var price = $("#price").val();
+            var qty = $("#qty").val();
+
+            $.ajax({
+                url: "/description/addToCart/",
+                type: "POST",
+                data: {productId: prodId, price: price, qty: qty},
+                success: function(data) {
+                    // Do stuff when the AJAX call returns
+                    console.log(data)
+                    $('#addToCart').html('Added');
+                    $(".addToCart").prop('disabled', true);
+                },
+                error: function(e){
+                    console.log(e)
+                }
+            });
+        });
+
+    });
+</script>
 
 </body>
 

@@ -64,6 +64,8 @@ router.get('/about', function(req, res, next){
 
 router.get('/product-details', async function(req, res, next){
 
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
     let data = await Product.findByPk(req.query.id);
 
     let relatedItem = await Product.findAll({
@@ -72,9 +74,23 @@ router.get('/product-details', async function(req, res, next){
                 [Op.like]: `%${data.dataValues.subcategory}`
             }
         }
-    })
-    
-    res.render('product-details', {product: data, relatedItem: relatedItem});
+    });
+
+    let isExist = await Cart.count({
+        where:{
+            [Op.and]: [
+                {productId: data.dataValues.id},
+                {userId: userId}
+            ]
+        }
+    });
+
+    let categoryData = await Category.findAll();
+    console.log(isExist)
+    res.render('product-details', {
+        product: data, relatedItem: relatedItem, 
+        cartExist: isExist, categories: categoryData
+    });
 });
 
 router.get('/product-list', async function(req, res, next){
@@ -146,14 +162,55 @@ router.get('/product-search', async function(req, res, next){
     
             limit: 10
         });
-        console.log(searchquery)
+        // console.log(searchquery)
     res.render('product-search', {product: searchquery});
 });
 
-router.get('/shoping-cart', async function(req, res, next){
+router.post('/index/addToCart/', async function (req, res, next){
+    let { productId, qty, price} = req.body;
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+    let quantity = qty === undefined ? 1 : qty;
+    // console.log(req.params)
+    console.log(quantity)
+    console.log(userId)
+    console.log(price)
+    let itemExist = await Cart.findOne({
+        where:{
+            [Op.and]:[
+                { userId: userId },
+                { productId: productId }
+            ]
+        }
+    });
+    
+    let newCartItem = new Cart({
+        userId: userId,
+        productId: productId,
+        totalQty: quantity,
+        unitPrice: price,
+        totalPrice: price * quantity
+    });
 
-    //Add to cart
-    let { productId, qty, price} = req.query;
+    if (itemExist === undefined || itemExist == null){
+
+        await newCartItem.save();
+    }
+
+    if (itemExist){
+        
+        let updateCart = await Cart.update({ totalQty: quantity, totalPrice: price * quantity},
+          {
+            where:{
+                id: itemExist.id
+            }
+        });
+    }
+    console.log(req.url)
+    res.redirect('/index');
+});
+
+router.post('/description/addToCart/', async function (req, res, next){
+    let { productId, qty, price} = req.body;
     let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
     let quantity = qty === undefined ? 1 : qty;
 
@@ -175,8 +232,7 @@ router.get('/shoping-cart', async function(req, res, next){
     });
 
     if (itemExist === undefined || itemExist == null){
-        console.log("got here")
-        console.log(itemExist)
+
         await newCartItem.save();
     }
 
@@ -190,7 +246,11 @@ router.get('/shoping-cart', async function(req, res, next){
         });
     }
 
-    console.log(itemExist);
+    res.redirect(`/product-details?id=${productId}`);
+});
+
+router.get('/shoping-cart', async function(req, res, next){
+
     res.render('shoping-cart');
 });
 
