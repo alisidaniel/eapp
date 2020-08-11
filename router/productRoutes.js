@@ -16,6 +16,7 @@ router.get('/product', async function(req, res, next){
 });
 
 router.get('/category', function(req, res, next){
+    console.log("got here")
     res.render('category');
 });
 

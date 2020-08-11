@@ -6,6 +6,7 @@ var {sessionChecker} = require('../middleware/auth');
 
 
 const db = require('../models');
+const { func } = require('joi');
 const Category = db.Category;
 const Product  = db.Product;
 const Cart = db.Cart;
@@ -52,7 +53,6 @@ router.get('/account', sessionChecker, async function(req, res, next){
 
 /* profile page. */
 router.get('/profile', sessionChecker, function(req, res, next){
-    console.log(req.session.user);
     res.render('profile', {data: req.session.user});
 });
 
@@ -130,7 +130,7 @@ router.get('/product-list', async function(req, res, next){
 
 router.get('/product-search', async function(req, res, next){
 
-        let {search} = req.body;
+        let {search} = req.query;
 
         let searchquery = await Product.findAll({
             where:{
@@ -205,7 +205,7 @@ router.post('/index/addToCart/', async function (req, res, next){
             }
         });
     }
-    console.log(req.url)
+
     res.redirect('/index');
 });
 
@@ -251,7 +251,41 @@ router.post('/description/addToCart/', async function (req, res, next){
 
 router.get('/shoping-cart', async function(req, res, next){
 
-    res.render('shoping-cart');
+        let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
+        let {qty, productId, price} = req.query;
+
+        if (qty != undefined && productId != undefined){
+
+            console.log("got here")
+
+            let updateCart = await Cart.update({ totalPrice: qty*price, totalQty: qty}, {
+                where:{
+                    userId:userId
+                }
+            });
+        }
+
+        let cartItem = await Cart.findAll({where:{
+            userId : userId
+        }});
+
+        let products = await Product.findAll();
+
+        var totalamount = [];
+
+        cartItem.forEach(amount => {
+              totalamount.push(amount.dataValues.totalPrice);
+        }); 
+
+        var sumamount = totalamount.reduce(function(a, b) {
+            return a + b;
+        }, 0);
+
+
+       
+        res.render('shoping-cart', {cartItem: cartItem, products: products, sumamount: sumamount});
+
 });
 
 

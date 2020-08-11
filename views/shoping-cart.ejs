@@ -1,11 +1,8 @@
     <%- include('layouts/header') %>
 
-    <%- include('layouts/nav') %>
-
-
     <!-- Shoping Cart Section Begin -->
     <section class="shoping-cart spad">
-        <div class="container">
+        <div class="container" id="app">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="shoping__cart__table">
@@ -20,28 +17,47 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            <% 
+                                
+                                for (var i = 0; i < cartItem.length; i++) {
+                                    
+                                  for (var j = 0; j < products.length; j++) {
+
+                                    if(products[j].dataValues.id == cartItem[i].dataValues.productId) {
+
+                                %>
                                 <tr>
                                     <td class="shoping__cart__item">
                                         <img src="img/cart/cart-1.jpg" alt="">
-                                        <h5>Vegetable’s Package</h5>
+                                        <h5><%= products[j].dataValues.title %></h5>
                                     </td>
                                     <td class="shoping__cart__price">
-                                        $55.00
+                                        ₦<%= cartItem[i].dataValues.unitPrice.toLocaleString() %>
                                     </td>
                                     <td class="shoping__cart__quantity">
                                         <div class="quantity">
-                                            <div class="pro-qty">
-                                                <input type="text" value="1">
-                                            </div>
+                                            <a type="button" class="qty" data-price="<%= cartItem[i].dataValues.unitPrice %>" data-id="<%= cartItem[i].dataValues.productId %>">
+                                                <div class="pro-qty">
+                                                    <input type="text" value="<%= cartItem[i].dataValues.totalQty %>" id="count"> 
+                                                </div>
+                                            </a>
                                         </div>
                                     </td>
                                     <td class="shoping__cart__total">
-                                        $110.00
+                                        ₦<%= cartItem[i].dataValues.totalPrice.toLocaleString() %>
                                     </td>
                                     <td class="shoping__cart__item__close">
                                         <span class="icon_close"></span>
                                     </td>
                                 </tr>
+
+                                <% } } } 
+                                
+                                   if (cartItem.length < 1) { %>
+                                    <tr>
+                                        <td colspan="6">Cart is empty</td>
+                                    </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>
@@ -70,8 +86,7 @@
                     <div class="shoping__checkout">
                         <h5>Cart Total</h5>
                         <ul>
-                            <li>Subtotal <span>$454.98</span></li>
-                            <li>Total <span>$454.98</span></li>
+                            <li>Total <span>₦<%= sumamount.toLocaleString() %></span></li>
                         </ul>
                         <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
                     </div>
@@ -84,10 +99,34 @@
 <%- include('layouts/footer') %>
 
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function(e) {
 
-        //Increase
+        $(".qty").on("click", function(){
 
+            var prodId = $(this).attr("data-id");
+            var qtyCount = $("#count").val();
+            var price = $(this).attr("data-price");
+
+            console.log(price);
+
+            $.ajax({
+                url: "/shoping-cart",
+                type: "GET",
+                data: {productId: prodId, qty: qtyCount, price: price},
+                success: function(data) {
+                    // Do stuff when the AJAX call returns
+
+                    console.log("success")
+                    console.log(data)
+                
+                  // $("#app").html(data);
+                },
+                error: function(e){
+                    console.log("failed")
+                    console.log(e);
+                }
+            });
+        });
     });
 </script>
 
