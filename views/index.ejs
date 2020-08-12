@@ -25,7 +25,7 @@
                                     All Categories
                                     <span class="arrow_carrot-down"></span>
                                 </div>
-                                <input type="text" placeholder="What do yo u need?">
+                                <input type="text" name="search" required placeholder="What do yo u need?">
                                 <button type="submit" class="site-btn">SEARCH</button>
                             </form>
                         </div>
@@ -121,7 +121,7 @@
                 data: {productId: prodId, price: price},
                 success: function(data) {
                     // Do stuff when the AJAX call returns
-                    alert("hi"+ price);
+                    alert("Added");
                 },
                 error: function(e){
                     console.log(e);

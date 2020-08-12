@@ -25,7 +25,7 @@
                                     All Categories
                                     <span class="arrow_carrot-down"></span>
                                 </div>
-                                <input type="text" placeholder="What do yo u need?">
+                                <input type="text" required name="search" placeholder="What do yo u need?">
                                 <button type="submit" class="site-btn">SEARCH</button>
                             </form>
                         </div>
@@ -90,7 +90,7 @@
                             <ul class="featured__item__pic__hover">
                                 <li><a href="/product-details?id=<%= products[i].dataValues.id %>"><i class="fa fa-retweet"></i></a></li>
                                 <li>
-                                    <a class="add_to_cart" id="add_to_cart" data-id="<%= products[i].dataValues.id %>" type="button">
+                                    <a class="add_to_cart" id="add_to_cart" data-price="<%= products[i].dataValues.price %>" data-id="<%= products[i].dataValues.id %>" type="button">
                                         <i class="fa fa-shopping-cart"></i>
                                     </a>
                                 </li>
@@ -116,16 +116,17 @@
         
         //Increase
         $(".add_to_cart").on("click", function(){
-            
+
             var prodId = $(this).data("id");
+            var price = $(this).data("price");
 
             $.ajax({
-                url: "/shoping-cart",
-                type: "GET",
-                data: {productId: prodId},
+                url: "/index/addToCart/",
+                type: "POST",
+                data: {productId: prodId, price: price},
                 success: function(data) {
                     // Do stuff when the AJAX call returns
-                    alert("hi");
+                    alert("Added");
                 },
                 error: function(e){
                     console.log(e);

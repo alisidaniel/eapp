@@ -3,6 +3,13 @@ const sequelize = new Sequelize('sqlite::memory:');
 
 module.exports = (sequelize, DataTypes) => {
     const ShippingAddress = sequelize.define('ShippingAddress', {
+
+        fname:{
+            type: DataTypes.STRING
+        },
+        lname:{
+            type: DataTypes.STRING
+        },
         address:{
             type: DataTypes.STRING,
             required: true,
@@ -19,10 +26,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         postalCode:{
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        country:{
             type: DataTypes.STRING,
             allowNull: false
         },

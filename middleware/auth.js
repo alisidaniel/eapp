@@ -16,4 +16,18 @@ const sessionChecker = (req, res, next) => {
 
 };
 
-module.exports = { sessionChecker }
+const checkoutSession = (req, res, next) => {
+  try{
+
+    if (req.session.user && req.cookies.user_sid) {
+      next();
+  } else {
+      return res.redirect('/login');
+  }  
+
+  }catch(e){
+    throw new Error ("Checkout session Error"+e);
+  }
+}
+
+module.exports = { sessionChecker, checkoutSession }

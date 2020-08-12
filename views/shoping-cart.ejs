@@ -111,14 +111,14 @@
             console.log(price);
 
             $.ajax({
-                url: "/shoping-cart",
-                type: "GET",
+                url: "/cartUpdate",
+                type: "POST",
                 data: {productId: prodId, qty: qtyCount, price: price},
                 success: function(data) {
                     // Do stuff when the AJAX call returns
 
-                    // console.log("success")
-                    console.log(data)
+                    console.log("success")
+                    // console.log(data)
                 
                   // $("#app").html(data);
                 },

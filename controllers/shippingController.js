@@ -7,12 +7,24 @@ const Op = db.Sequelize.Op;
 const store = async (req, res, next) => {
 
     try{
-        let data = await Shipping.create({...req.body}).save();
 
-        return res.status(200).json({data});
+        if (!res.session.user) {
+
+            return res.status(404).json({message: "Not a user"});
+        }
+
+        console.log("got here")
+
+        let data = new Shipping({...req.body});
+
+        data.userId = req.session.user.id;
+
+        data.save();
+
+        res.redirect('/checkout');
 
     }catch(e){
-        next(e);
+        throw new Error(e);
     }
 
 }

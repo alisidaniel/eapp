@@ -4,4 +4,6 @@ const {store, update} = require('../controllers/shippingController');
 const router = express.Router();
 
 
-router.post('shipping', store);
+router.post('/add/shipping', store);
+
+module.exports = router;

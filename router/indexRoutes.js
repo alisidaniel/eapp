@@ -2,13 +2,14 @@ var express = require('express');
 var {sendMessage} = require('../controllers/contactController');
 var {login, register} = require('../controllers/authController');
 var {account, updateRecord} = require('../controllers/userController');
-var {sessionChecker} = require('../middleware/auth');
+var {sessionChecker, checkoutSession} = require('../middleware/auth');
 
 
 const db = require('../models');
 const { func } = require('joi');
 const Category = db.Category;
 const Product  = db.Product;
+const ShippingAddress  = db.ShippingAddress;
 const Cart = db.Cart;
 const Op = db.Sequelize.Op;
 
@@ -71,7 +72,7 @@ router.get('/account', sessionChecker, async function(req, res, next){
     let cartItem = await Cart.findAll({where:{
         userId : userId
     }});
-
+    
     res.render('account', {categories: categoryData, cartItem: cartItem, products: productData, data: req.session.user});
 });
 
@@ -275,17 +276,6 @@ router.get('/shoping-cart', async function(req, res, next){
 
         let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
 
-        let {qty, productId, price} = req.query;
-
-        if (qty != undefined && productId != undefined){
-
-            let updateCart = await Cart.update({ totalPrice: qty*price, totalQty: qty}, {
-                where:{
-                    userId:userId, productId:productId
-                }
-            });
-        }
-
         let cartItem = await Cart.findAll({where:{
             userId : userId
         }});
@@ -306,8 +296,23 @@ router.get('/shoping-cart', async function(req, res, next){
 
 });
 
+router.post('/cartUpdate', async function (req, res, next) {
 
-router.get('/checkout', async function(req, res, next){
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
+    let {qty, productId, price} = req.body;
+
+    let updateCart = await Cart.update({ totalPrice: qty*price, totalQty: qty}, {
+        where:{
+            userId:userId, productId:productId
+        }
+    });
+
+    res.redirect('/shoping-cart');
+});
+
+
+router.get('/checkout', checkoutSession, async function(req, res, next){
 
     let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
 
@@ -317,8 +322,13 @@ router.get('/checkout', async function(req, res, next){
 
     let categoryData = await Category.findAll();
 
-
-    res.render('checkout',{cartItem:cartItem, categories: categoryData});
+    let addressExist = await ShippingAddress.findOne({
+        where: {
+            userId:userId
+        }
+    });
+    
+    res.render('checkout',{cartItem:cartItem, categories: categoryData, address: addressExist });
 });
 
 router.get('/contact', function(req, res, next) {

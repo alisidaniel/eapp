@@ -11,6 +11,7 @@ var {PORT, PRIVATE_KEY} = require('./config/config');
 
 var indexRoutes = require('./router/indexRoutes');
 var productRoutes = require('./router/productRoutes');
+var shippingRoutes = require('./router/shippingRoutes');
 
 const db = require("./models");
 
@@ -44,6 +45,7 @@ app.use(session({
 
 app.use(indexRoutes);
 app.use(productRoutes);
+app.use(shippingRoutes);
 
 //Page not found
 app.use(function(req, res, next){
@@ -55,7 +57,8 @@ app.use(morgan('dev'));
 
 //Error
 app.use(function (error, req, res, next) {
-  if(error instanceof SyntaxError){ //Handle SyntaxError here.
+  if(error instanceof SyntaxError){ 
+    //Handle SyntaxError here.
     return res.status(500).send({data : "Invalid data"});
   } else {
     next();
