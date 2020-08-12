@@ -31,24 +31,48 @@ router.get('/login', function(req, res, next){
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
+
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
     let categoryData = await Category.findAll();
+
     let productData = await Product.findAll();
+
+    let cartItem = await Cart.findAll({where:{
+        userId : userId
+    }});
     
-    res.render('index', {categories: categoryData, products: productData});
+    res.render('index', {cartItem: cartItem, categories: categoryData, products: productData});
 });
 
-router.get('/index', async function(req, res, next){ 
+router.get('/index', async function(req, res, next){
+
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
     let categoryData = await Category.findAll();
+
     let productData = await Product.findAll();
-    // console.log(JSON.stringify(categoryData));
-    res.render('index', {categories: categoryData, products: productData});
+
+    let cartItem = await Cart.findAll({where:{
+        userId : userId
+    }});
+ 
+    res.render('index', {cartItem: cartItem, categories: categoryData, products: productData});
 });
 
 router.get('/account', sessionChecker, async function(req, res, next){
+
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
     let categoryData = await Category.findAll();
+
     let productData = await Product.findAll();
 
-    res.render('account', {categories: categoryData, products: productData, data: req.session.user});
+    let cartItem = await Cart.findAll({where:{
+        userId : userId
+    }});
+
+    res.render('account', {categories: categoryData, cartItem: cartItem, products: productData, data: req.session.user});
 });
 
 /* profile page. */
@@ -86,15 +110,23 @@ router.get('/product-details', async function(req, res, next){
     });
 
     let categoryData = await Category.findAll();
-    console.log(isExist)
+
+    let cartItem = await Cart.findAll({where:{
+        userId : userId
+    }});
+
     res.render('product-details', {
-        product: data, relatedItem: relatedItem, 
+        product: data, relatedItem: relatedItem, cartItem: cartItem,
         cartExist: isExist, categories: categoryData
     });
 });
 
 router.get('/product-list', async function(req, res, next){
+
     let { subcategory, category } = req.query;
+
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
     let categoryData = await Category.findOne({
         where:{
             name:{
@@ -105,19 +137,15 @@ router.get('/product-list', async function(req, res, next){
 
     let searchquery = await Product.findAll({
         where:{
-            
-            subcategory:{
-                [Op.like]: subcategory === undefined ? `%${category}` : `%${subcategory}`
-            }
+            [Op.or]: [
+                { category: { [Op.like]: `${subcategory === undefined ? `%${category}%` :  `%${subcategory}`}%` } },
+                { subcategory: { [Op.like]: `${subcategory === undefined ? `%${category}%` :  `%${subcategory}`}%` } }
+            ]
         }
     });
 
     let latest = await Product.findAll({
-        where:{
-            category:{
-                [Op.like]: `%${category}`
-            }
-        },
+  
         order: [
             ['id', 'DESC']
         ],
@@ -125,35 +153,26 @@ router.get('/product-list', async function(req, res, next){
         limit: 10
     });
 
-    res.render('product-list', {categories: categoryData, product: searchquery, newProducts: latest});
+    let cartItem = await Cart.findAll({where:{
+        userId : userId
+    }});
+
+    res.render('product-list', {cartItem: cartItem, categories: categoryData, product: searchquery, newProducts: latest});
 });
 
 router.get('/product-search', async function(req, res, next){
 
         let {search} = req.query;
 
+        let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
         let searchquery = await Product.findAll({
             where:{
                 [Op.or]: [
-                    {
-                        title:{
-                            [Op.like]: `%${search}`
-                        }
-                    },
-                    {
-                        category:{
-                            [Op.like]: `%${search}`
-                        }
-                    },
-                    {
-                        brand:{
-                            [Op.like]: `%${search}`
-                        }
-                    },{
-                        subcategory:{
-                            [Op.like]: `%${search}`
-                        }
-                    }
+                    { title: { [Op.like]: `%${search}%` } },
+                    { category: { [Op.like]: `%${search}%` } },
+                    { subcategory: { [Op.like]: `%${search}%` } },
+                    { brand: { [Op.like]: `%${search}%` } },  
                 ]
             },
             order: [
@@ -162,18 +181,21 @@ router.get('/product-search', async function(req, res, next){
     
             limit: 10
         });
-        // console.log(searchquery)
-    res.render('product-search', {product: searchquery});
+
+        let categoryData = await Category.findAll();
+
+        let cartItem = await Cart.findAll({where:{
+            userId : userId
+        }});
+
+    res.render('product-search', {product: searchquery, categories: categoryData, cartItem: cartItem});
 });
 
 router.post('/index/addToCart/', async function (req, res, next){
     let { productId, qty, price} = req.body;
     let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
     let quantity = qty === undefined ? 1 : qty;
-    // console.log(req.params)
-    console.log(quantity)
-    console.log(userId)
-    console.log(price)
+
     let itemExist = await Cart.findOne({
         where:{
             [Op.and]:[
@@ -257,11 +279,9 @@ router.get('/shoping-cart', async function(req, res, next){
 
         if (qty != undefined && productId != undefined){
 
-            console.log("got here")
-
             let updateCart = await Cart.update({ totalPrice: qty*price, totalQty: qty}, {
                 where:{
-                    userId:userId
+                    userId:userId, productId:productId
                 }
             });
         }
@@ -282,15 +302,23 @@ router.get('/shoping-cart', async function(req, res, next){
             return a + b;
         }, 0);
 
-
-       
-        res.render('shoping-cart', {cartItem: cartItem, products: products, sumamount: sumamount});
+    res.render('shoping-cart', {cartItem: cartItem, products: products, sumamount: sumamount});
 
 });
 
 
-router.get('/checkout', function(req, res, next){
-    res.render('checkout');
+router.get('/checkout', async function(req, res, next){
+
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
+    let cartItem = await Cart.findAll({where:{
+        userId : userId
+    }});
+
+    let categoryData = await Category.findAll();
+
+
+    res.render('checkout',{cartItem:cartItem, categories: categoryData});
 });
 
 router.get('/contact', function(req, res, next) {

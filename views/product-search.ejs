@@ -23,7 +23,7 @@
                             </div>
                             <div class="col-lg-4 col-md-4">
                                 <div class="filter__found">
-                                    <h6><span> </span> Products found</h6>
+                                    <h6><span> <%= product.length %> </span> Products found</h6>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-3">
@@ -53,6 +53,10 @@
                                 </div>
                             </div>
                         </div>
+                     <% } if (product.length < 1){%>
+                           <div class="col-lg-12">
+                                <p class="text-center"><b>No result found.</b></p>
+                            </div>
                      <% } %>
                     </div>
                     <div class="product__pagination">
