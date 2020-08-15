@@ -165,9 +165,10 @@
                 data: {productId: prodId, price: price, qty: qty},
                 success: function(data) {
                     // Do stuff when the AJAX call returns
-                    console.log(data)
+                    // console.log(data)
                     $('#addToCart').html('Added');
                     $(".addToCart").prop('disabled', true);
+                    window.location.reload();
                 },
                 error: function(e){
                     console.log(e)

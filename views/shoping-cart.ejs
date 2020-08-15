@@ -39,7 +39,7 @@
                                             <a type="button" class="qty" data-price="<%= cartItem[i].dataValues.unitPrice %>" data-id="<%= cartItem[i].dataValues.productId %>" data-count="<%= cartItem[i].dataValues.totalQty %>">
                                                 <!-- <div class="pro-qty"> -->
                                                     <!-- <input type="text" value="<%= cartItem[i].dataValues.totalQty %>" name="count" class="count">  -->
-                                                   <select onchange="getQty(this.value)">
+                                                   <select id="pqty" onchange="getQty(this.value)" onselect="getQty(this.value)" onmouseover="getQty(this.value)">
                                                       <optgroup>
                                                         <option><%= cartItem[i].dataValues.totalQty %></option>
                                                       </optgroup>
@@ -65,7 +65,9 @@
                                         ₦<%= cartItem[i].dataValues.totalPrice.toLocaleString() %>
                                     </td>
                                     <td class="shoping__cart__item__close">
-                                        <span class="icon_close"></span>
+                                        <a type="button" class="remove" data-id="<%= cartItem[i].dataValues.productId %>">
+                                            <span class="icon_close"></span>
+                                        </a>
                                     </td>
                                 </tr>
 
@@ -76,6 +78,7 @@
                                         <td colspan="6">Cart is empty</td>
                                     </tr>
                                 <% } %>
+                                <input type="hidden" id="inputqty">
                             </tbody>
                         </table>
                     </div>
@@ -118,40 +121,61 @@
 <%- include('layouts/footer') %>
 
 <script type="text/javascript">
+
+    var qtyyy = 0;
+    
+    function getQty(qty){
+
+        $("#inputqty").val(qty);
+        qtyyy = qty; 
+    }
+
+
     $(document).ready(function(e) {
 
-         function getQty(qty){
-            console.log("hi");
-        }
 
-        $(".qty").on("click", function(){
+        $(".qty").on("change", function(){
 
             var prodId = $(this).attr("data-id");
             var price = $(this).attr("data-price");
-            var qtyCount = $("#qtyCount option:selected").val();
-        
+            var qtyCount = $("#inputqty").val();
 
-            // console.log(getQty);
+            $.ajax({
+                url: "/cartUpdate",
+                type: "POST",
+                data: {productId: prodId, qty: qtyCount, price: price},
+                success: function(data) {
 
-            // $.ajax({
-            //     url: "/cartUpdate",
-            //     type: "POST",
-            //     data: {productId: prodId, qty: qtyCount, price: price},
-            //     success: function(data) {
-            //         // Do stuff when the AJAX call returns
-
-            //         console.log("success")
-            //         // console.log(data)
-                
-            //       // $("#app").html(data);
-            //     },
-            //     error: function(e){
-            //         console.log("failed")
-            //         console.log(e);
-            //     }
-            // });
+                    // console.log('data')
+                    window.location.reload();
+                   // $("#app").html(data);
+                },
+                error: function(e){
+                    console.log("failed")
+                    console.log(e);
+                }
+            });
         });
+
+        $(".remove").on("click", function(){
+            var pid = $(this).attr("data-id");
+            console.log(pid)
+
+            $.ajax({
+                url: "/removeCartItem",
+                type: "POST",
+                data: {productId: pid},
+                success: function(data){
+                    // console.log("success")
+                    window.location.reload();
+                },
+                error: function(e){
+                    console.log(e);
+                }
+            });
+        })
     });
+
 </script>
 
 </body>

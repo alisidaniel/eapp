@@ -35,6 +35,8 @@ router.get('/', async function(req, res, next) {
 
     let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
 
+    console.log(userId)
+
     let categoryData = await Category.findAll();
 
     let productData = await Product.findAll();
@@ -43,7 +45,9 @@ router.get('/', async function(req, res, next) {
         userId : userId
     }});
     
-    res.render('index', {cartItem: cartItem, categories: categoryData, products: productData});
+    res.render('index', {
+        cartItem: cartItem, categories: categoryData, 
+        products: productData, data: req.session.user});
 });
 
 router.get('/index', async function(req, res, next){
@@ -54,11 +58,14 @@ router.get('/index', async function(req, res, next){
 
     let productData = await Product.findAll();
 
-    let cartItem = await Cart.findAll({where:{
+    let cartItem = await Cart.findAll({
+        where:{
         userId : userId
     }});
  
-    res.render('index', {cartItem: cartItem, categories: categoryData, products: productData});
+    res.render('index', {
+        cartItem: cartItem, categories: categoryData,
+        products: productData, data: req.session.user});
 });
 
 router.get('/account', sessionChecker, async function(req, res, next){
@@ -73,7 +80,9 @@ router.get('/account', sessionChecker, async function(req, res, next){
         userId : userId
     }});
     
-    res.render('account', {categories: categoryData, cartItem: cartItem, products: productData, data: req.session.user});
+    res.render('account', {
+        categories: categoryData, cartItem: cartItem,
+        products: productData, data: req.session.user});
 });
 
 /* profile page. */
@@ -118,7 +127,7 @@ router.get('/product-details', async function(req, res, next){
 
     res.render('product-details', {
         product: data, relatedItem: relatedItem, cartItem: cartItem,
-        cartExist: isExist, categories: categoryData
+        cartExist: isExist, categories: categoryData, data: req.session.user
     });
 });
 
@@ -158,7 +167,9 @@ router.get('/product-list', async function(req, res, next){
         userId : userId
     }});
 
-    res.render('product-list', {cartItem: cartItem, categories: categoryData, product: searchquery, newProducts: latest});
+    res.render('product-list', {
+        cartItem: cartItem, categories: categoryData,
+        product: searchquery, newProducts: latest, data: req.session.user});
 });
 
 router.get('/product-search', async function(req, res, next){
@@ -189,7 +200,9 @@ router.get('/product-search', async function(req, res, next){
             userId : userId
         }});
 
-    res.render('product-search', {product: searchquery, categories: categoryData, cartItem: cartItem});
+    res.render('product-search', {
+        product: searchquery, categories: categoryData,
+        cartItem: cartItem, data: req.session.user});
 });
 
 router.post('/index/addToCart/', async function (req, res, next){
@@ -292,7 +305,9 @@ router.get('/shoping-cart', async function(req, res, next){
             return a + b;
         }, 0);
 
-    res.render('shoping-cart', {cartItem: cartItem, products: products, sumamount: sumamount});
+    res.render('shoping-cart', {
+        cartItem: cartItem, products: products,
+        sumamount: sumamount, data: req.session.user});
 
 });
 
@@ -305,6 +320,23 @@ router.post('/cartUpdate', async function (req, res, next) {
     let updateCart = await Cart.update({ totalPrice: qty*price, totalQty: qty}, {
         where:{
             userId:userId, productId:productId
+        }
+    });
+
+    res.redirect('/shoping-cart');
+});
+
+
+router.post('/removeCartItem', async function (req, res, next) {
+
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
+    let {productId} = req.body;
+
+    await Cart.update({userId: null}, {
+        where:{
+            userId:userId,
+            productId: productId
         }
     });
 
@@ -328,7 +360,9 @@ router.get('/checkout', checkoutSession, async function(req, res, next){
         }
     });
     
-    res.render('checkout',{cartItem:cartItem, categories: categoryData, address: addressExist });
+    res.render('checkout',{
+        cartItem:cartItem, categories: categoryData, 
+        address: addressExist, data: req.session.user });
 });
 
 router.get('/contact', function(req, res, next) {

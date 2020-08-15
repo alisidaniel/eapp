@@ -121,7 +121,8 @@
                 data: {productId: prodId, price: price},
                 success: function(data) {
                     // Do stuff when the AJAX call returns
-                    alert("Added");
+                    // alert("Added");
+                    window.location.reload();
                 },
                 error: function(e){
                     console.log(e);
