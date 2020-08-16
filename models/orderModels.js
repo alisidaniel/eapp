@@ -10,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        amount:{
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         status:{ //1 is active 2 is cancelled
             type: DataTypes.INTEGER,
             allowNull: false,

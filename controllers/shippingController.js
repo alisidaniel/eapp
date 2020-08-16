@@ -8,13 +8,6 @@ const store = async (req, res, next) => {
 
     try{
 
-        if (!res.session.user) {
-
-            return res.status(404).json({message: "Not a user"});
-        }
-
-        console.log("got here")
-
         let data = new Shipping({...req.body});
 
         data.userId = req.session.user.id;
@@ -24,7 +17,7 @@ const store = async (req, res, next) => {
         res.redirect('/checkout');
 
     }catch(e){
-        throw new Error(e);
+        throw new Error("Something went wrong: "+e)
     }
 
 }

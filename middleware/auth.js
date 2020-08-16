@@ -30,4 +30,23 @@ const checkoutSession = (req, res, next) => {
   }
 }
 
-module.exports = { sessionChecker, checkoutSession }
+const isAdmin = (req, res, next) => {
+  try{
+
+    if (req.session.user && req.cookies.user_sid) {
+       
+        if (req.session.user.isAdmin == true){
+          next();
+        }else{
+          return res.redirect('/login');
+        }
+    } else {
+      return res.redirect('/login');
+    }  
+
+  }catch(e){
+    throw new Error("Something happened.. "+e)
+  }
+}
+
+module.exports = { sessionChecker, checkoutSession, isAdmin }

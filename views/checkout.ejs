@@ -16,47 +16,47 @@
 
                         <% } else { %>
 
-                            <h6 class="text-warning"><b>Continue with this Shipping address or modify. </b></h6>
+                            <h6 class="text-warning"><b>Continue with this Shipping address or edit. </b></h6>
 
                        <% } %>
                     
                   <div class="row">
                     <div class="col-lg-6">
-                        <p>Address: </p>
+                        <!-- <p>Address: </p> -->
                     </div>  
                   </div>
-                  <form action="/add/shipping" method="POST">
+                  <form action="/add/shipping" method="POST" id="paymentForm">
                     <div class="row">
                         <div class="col-lg-8 col-md-6">
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>Fist Name<span>*</span></p>
-                                        <input type="text" name="fname" required value="">
+                                        <input type="text" name="fname" id="fname" required value="<%= address.dataValues.fname %>">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>Last Name<span>*</span></p>
-                                        <input type="text" name="lname" required value="">
+                                        <input type="text" name="lname" id="lname" required value="<%= address.dataValues.lname %>">
                                     </div>
                                 </div>
                             </div>
                             <div class="checkout__input">
                                 <p>Address<span>*</span></p>
-                                <input type="text" placeholder="Street Address" name="address" required value="" class="checkout__input__add">
+                                <input type="text" placeholder="Street Address" name="address" required value="<%= address.dataValues.address %>" class="checkout__input__add">
                             </div>
                             <div class="checkout__input">
                                 <p>Town/City<span>*</span></p>
-                                <input type="text" name="city" required value="">
+                                <input type="text" name="city" required value="<%= address.dataValues.city %>">
                             </div>
                             <div class="checkout__input">
                                 <p>Country/State<span>*</span></p>
-                                <input type="text" name="state" value="" required>
+                                <input type="text" name="state" value="<%= address.dataValues.state %>" required>
                             </div>
                             <div class="checkout__input">
                                 <p>Postcode / ZIP<span>*</span></p>
-                                <input type="text" name="postalCode" required value="">
+                                <input type="text" name="postalCode" required value="<%= address.dataValues.postalCode %>">
                             </div>
                     
                         </div>
@@ -66,10 +66,27 @@
                                 <h4>Your Order</h4>
                                 <div class="checkout__order__products">Products<span>Total</span></div>
                                 <ul>
-                                    <li>Vegetable’s Package <span>$75.99</span></li>
+                                <% 
+                                
+                                for (var i = 0; i < cartItem.length; i++) {
+                                    
+                                  for (var j = 0; j < products.length; j++) {
+
+                                    if(products[j].dataValues.id == cartItem[i].dataValues.productId) {
+
+                                %>
+                                    <li><%= products[j].dataValues.title %> <span> ₦<%= cartItem[i].dataValues.unitPrice.toLocaleString() %></span></li>
+                                
+                                <% } } } 
+                                
+                                   if (cartItem.length < 1) { %>
+                                        <li>No product found. <span>0.00</span></li>
+                                <% } %>                                    
                                 </ul>
-                                <div class="checkout__order__subtotal">Subtotal <span>$750.99</span></div>
-                                <div class="checkout__order__total">Total <span>$750.99</span></div>
+                                <div class="checkout__order__subtotal">Subtotal <span>₦<%= sumamount.toLocaleString() %></span></div>
+                                <input type="hidden" name="email" id="email" value="<%= data.email %>">
+                                <input type="hidden" name="amount" id="amount" value="<%= sumamount %>">
+                                <div class="checkout__order__total">Total <span>₦<%= sumamount.toLocaleString() %></span></div>
                 
                                 <div class="checkout__input__checkbox">
                                     <label for="payment">
@@ -87,7 +104,7 @@
                                     </label>
                                 </div>
 
-                                <button type="submit" class="site-btn">PLACE ORDER</button>
+                                <button type="submit" class="site-btn" onclick="payWithPaystack()">PLACE ORDER</button>
                             </div>
                         </div>
                     </div>
@@ -98,6 +115,53 @@
     <!-- Checkout Section End -->
 
 <%- include('layouts/footer') %>
+<script src="https://js.paystack.co/v1/inline.js"></script> 
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        const paymentForm = document.getElementById('paymentForm');
+        const amt = document.getElementById('amount').value;
+        paymentForm.addEventListener("submit", payWithPaystack, false);
+        function payWithPaystack(e) {
+          e.preventDefault();
+          let handler = PaystackPop.setup({
+            key: 'pk_test_5fafc33dae645b70e203e5b65c3a6b15c2deeb05', // Replace with your public key
+            email: document.getElementById("email").value,
+            amount: document.getElementById("amount").value * 100,
+            firstname: document.getElementById("fname").value,
+            lastname: document.getElementById("lname").value,
+            // ref: ''+Math.floor((Math.random() * 1000000000) + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+            // label: "Optional string that replaces customer email"
+            onClose: function(){
+              alert('Window closed.');
+            },
+            callback: function(response){
+                $.ajax({
+                url: '/post/order',
+                method: 'post',
+                dataType: "json",
+                data:{response:response, amount: amt},
+                success: function (response) {
+                  // the transaction status is in response.data.status
+                    let message = 'Payment complete! Reference: ' + response;
+                    console.log(message);
+                    console.log(response.redirecturl)
+                    Window.location.replace("/payment/successful");
+                    Window.location.replace(response.redirecturl);
+                    Window.location.href = 'http://localhost:3000/payment/successful';
+                },
+                error: function (error){
+                    console.log(error);
+                }
+              });
+            }
+          });
+          handler.openIframe();
+        }
+
+    });
+</script>
 
 </body>
 

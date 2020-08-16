@@ -2,15 +2,15 @@ var express = require('express');
 var {sendMessage} = require('../controllers/contactController');
 var {login, register} = require('../controllers/authController');
 var {account, updateRecord} = require('../controllers/userController');
-var {sessionChecker, checkoutSession} = require('../middleware/auth');
+var {sessionChecker, checkoutSession, isAdmin} = require('../middleware/auth');
 
 
 const db = require('../models');
-const { func } = require('joi');
 const Category = db.Category;
 const Product  = db.Product;
 const ShippingAddress  = db.ShippingAddress;
 const Cart = db.Cart;
+const Order = db.Order;
 const Op = db.Sequelize.Op;
 
 var router = express.Router();
@@ -21,21 +21,39 @@ router.post('/login', login);
 
 
 router.get('/register', function(req, res, next){
+    
     res.render('register');
 });
 
 router.get('/login', function(req, res, next){
+
     res.render('login');
 });
 
+
+router.get('/admin', isAdmin, async function(req, res, next){
+
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
+    let categoryData = await Category.findAll();
+
+    let productData = await Product.findAll();
+
+    let cartItem = await Cart.findAll({where:{
+        userId : userId
+    }});
+
+    res.render('admin', {
+        cartItem: cartItem, categories: categoryData, 
+        products: productData, data: req.session.user
+    });
+});
 
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
 
     let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
-
-    console.log(userId)
 
     let categoryData = await Category.findAll();
 
@@ -47,7 +65,8 @@ router.get('/', async function(req, res, next) {
     
     res.render('index', {
         cartItem: cartItem, categories: categoryData, 
-        products: productData, data: req.session.user});
+        products: productData, data: req.session.user
+    });
 });
 
 router.get('/index', async function(req, res, next){
@@ -352,6 +371,18 @@ router.get('/checkout', checkoutSession, async function(req, res, next){
         userId : userId
     }});
 
+    let products = await Product.findAll();
+
+    var totalamount = [];
+
+    cartItem.forEach(amount => {
+          totalamount.push(amount.dataValues.totalPrice);
+    }); 
+
+    var sumamount = totalamount.reduce(function(a, b) {
+        return a + b;
+    }, 0);
+
     let categoryData = await Category.findAll();
 
     let addressExist = await ShippingAddress.findOne({
@@ -361,12 +392,77 @@ router.get('/checkout', checkoutSession, async function(req, res, next){
     });
     
     res.render('checkout',{
-        cartItem:cartItem, categories: categoryData, 
-        address: addressExist, data: req.session.user });
+        cartItem:cartItem, categories: categoryData, sumamount: sumamount, 
+        address: addressExist, data: req.session.user, products: products });
 });
 
-router.get('/contact', function(req, res, next) {
-  res.render('contact');
+router.post('/post/order', async function(req, res, next){
+
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
+    if (req.body.response.status === 'success'){
+        let data = await Order.create({
+            reference: req.body.response.reference,
+            amount: req.body.amount,
+            status: 0,
+            userId: userId
+        });
+    }
+
+    res.redirect('/payment/successful');
+
+});
+
+router.get('/order', async function(req, res, next){
+
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
+    let cartItem = await Cart.findAll({where:{
+        userId : userId
+    }});
+
+    let categoryData = await Category.findAll();
+
+    let orders = await Order.findAll({ where:{
+        userId: userId, status: 0
+    }});
+
+    res.render('order', {
+        data: req.session.user, cartItem: cartItem,
+        categories: categoryData, orders:orders
+    });
+});
+
+router.get('/payment/successful', async function(req, res, next){
+    
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
+    let cartItem = await Cart.findAll({where:{
+        userId : userId
+    }});
+
+    let categoryData = await Category.findAll();
+
+    res.render('payment', {
+        data: req.session.user, cartItem: cartItem,
+        categories: categoryData
+    });
+})
+
+router.get('/contact', async function(req, res, next) {
+
+    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+
+    let cartItem = await Cart.findAll({where:{
+        userId : userId
+    }});
+
+    let categoryData = await Category.findAll();
+
+  res.render('contact', {
+    data: req.session.user, cartItem: cartItem,
+    categories: categoryData
+  });
 });
 
 router.post('/email/contact', sendMessage, function(req, res){

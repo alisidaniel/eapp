@@ -53,7 +53,12 @@ const login = async (req, res, next) => {
 
       req.session.user = user.dataValues;
 
-       res.redirect('/account');
+      if(req.session.user.isAdmin == true){
+
+        res.redirect('/admin');
+      }else{
+        res.redirect('/account');
+      }
 
     }catch(e){
       return res.render('login', {message: e});
