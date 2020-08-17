@@ -1,10 +1,9 @@
 require("dotenv").config();
 var express = require('express');
 var cookieParser = require('cookie-parser');
-var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var flash = require('express-flash');
+var morgan = require('morgan');
 
 var {PORT, PRIVATE_KEY} = require('./config/config');
 
@@ -23,13 +22,13 @@ db.sequelize.sync().then(() => {
 
 const app = express();
 
+app.use(express.json());
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(cookieParser());
+
 app.set('view engine', 'ejs');
 app.use('/assets', express.static('assets'));
 
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(cookieParser());
-app.use(flash());
 
 // initialize express-session to allow us track the logged-in user across sessions.
 app.use(session({
@@ -38,7 +37,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-      expires: 1000 * 60 * 60 * 24 // 2hrs
+      expires: 1000 * 60 * 60 * 60 * 24 // 2hrs
   }
 }));
 

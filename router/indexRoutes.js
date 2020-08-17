@@ -21,7 +21,7 @@ router.post('/login', login);
 
 
 router.get('/register', function(req, res, next){
-    
+
     res.render('register');
 });
 
@@ -55,6 +55,8 @@ router.get('/', async function(req, res, next) {
 
     let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
 
+    console.log(req.cookies)
+
     let categoryData = await Category.findAll();
 
     let productData = await Product.findAll();
@@ -72,7 +74,8 @@ router.get('/', async function(req, res, next) {
 router.get('/index', async function(req, res, next){
 
     let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
-
+    // console.log(req.cookies)
+    console.log("this is your cookie "+ req.cookies.user_sid)
     let categoryData = await Category.findAll();
 
     let productData = await Product.findAll();
