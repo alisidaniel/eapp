@@ -21,6 +21,8 @@ const register = async (req, res, next) => {
         });
       
         if (userExist > 0) return res.render('register', {message: "User account exist"});
+
+        if (password.length < 6) return res.render('register', {message: "Password too short."});
       
         let user = new User(_.pick(req.body, ['username', 'email', 'password']));
 

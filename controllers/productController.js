@@ -119,7 +119,7 @@ const postCategory = async (req, res, next) => {
             subcategory: newcategory ? newcategory : req.body.subcategory 
         });
 
-        return res.redirect('/category');
+        return res.redirect({error:"", success:"Successfuly uploaded category."}, '/category');
     
     }catch(e){
 

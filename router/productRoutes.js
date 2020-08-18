@@ -12,21 +12,31 @@ router.post('/product', isAdmin, create, function(req, res, next){
 });
 
 router.get('/product', isAdmin, async function(req, res, next){
-
-    let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
+    try{
+        
+        let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
     
-    let categoryData = await Category.findAll();
+        let categoryData = await Category.findAll();
+    
+        res.render('product', {categories: categoryData, data: req.session.user, error:"", success:""});
 
-    res.render('product', {categories: categoryData, data: req.session.user});
+    }catch(e){
+        res.render('product', {error:e, success:""})
+    }
 });
 
 router.get('/category', isAdmin, async function(req, res, next){
 
+   try{
     let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
 
     let categoryData = await Category.findAll();
 
-    res.render('category',{categories: categoryData, data: req.session.user});
+    res.render('category',{categories: categoryData, data: req.session.user, error:"", success:""});
+   }catch(e){
+
+       res.render('category', {error:e, success:""});
+   }
 });
 
 router.post('/category', isAdmin, postCategory, function(req, res, next){

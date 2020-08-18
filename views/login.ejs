@@ -149,12 +149,35 @@
         </div>
     </header>
 
-
+<style type="text/css">
+	
+      @media (min-width: 992px) { 
+      	#login{
+      		margin-left: 300px;
+      	}
+      }
+      
+   
+      @media (min-width: 1200px) {
+      	#login{
+      		margin-left: 300px;
+      	}
+      }
+</style>
 <div class="container">
 	<div class="row">
-		<div class="col-lg-6 offset-3">
+		<div class="col-md-6" id="login">
+			<% if (message) { %>
+
+				<div class="alert alert-danger" role="alert">
+					<%= message %>
+				</div>
+
+			<% } %>
 			<form class="form" method="POST" action="/login">
-				<p><b>Login</b></p>
+				<p>
+					<b>Login</b>
+				</p>
 				<div class="form-group">
 					<input type="email" name="email" class="form-control" required placeholder="Email">
 				</div>

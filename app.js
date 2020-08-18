@@ -22,25 +22,25 @@ db.sequelize.sync().then(() => {
 
 const app = express();
 
-app.use(express.json());
-app.use(bodyParser.urlencoded({extended: true}))
-app.use(cookieParser());
-
 app.set('view engine', 'ejs');
+
 app.use('/assets', express.static('assets'));
+
+app.use(bodyParser.urlencoded({extended: true}));
+
+app.use(cookieParser());
 
 
 // initialize express-session to allow us track the logged-in user across sessions.
 app.use(session({
   key: 'user_sid',
   secret: `${PRIVATE_KEY}`,
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
   cookie: {
       expires: 1000 * 60 * 60 * 60 * 24 // 2hrs
   }
 }));
-
 
 app.use(indexRoutes);
 app.use(productRoutes);

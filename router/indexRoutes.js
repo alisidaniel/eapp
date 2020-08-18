@@ -22,12 +22,12 @@ router.post('/login', login);
 
 router.get('/register', function(req, res, next){
 
-    res.render('register');
+    res.render('register', {message: ""});
 });
 
 router.get('/login', function(req, res, next){
 
-    res.render('login');
+    res.render('login', {message: ""});
 });
 
 
@@ -74,8 +74,7 @@ router.get('/', async function(req, res, next) {
 router.get('/index', async function(req, res, next){
 
     let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
-    // console.log(req.cookies)
-    console.log("this is your cookie "+ req.cookies.user_sid)
+
     let categoryData = await Category.findAll();
 
     let productData = await Product.findAll();
@@ -159,10 +158,12 @@ router.get('/product-list', async function(req, res, next){
 
     let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
 
+    console.log(category)
+
     let categoryData = await Category.findOne({
         where:{
             name:{
-                [Op.like]: `%${category}`
+                [Op.like]: `%${category}%`
             }
         }
     });
@@ -475,7 +476,7 @@ router.post('/email/contact', sendMessage, function(req, res){
 router.get('/logout', (req, res) => {
     if (req.session.user && req.cookies.user_sid) {
         res.clearCookie('user_sid');
-        res.redirect('/');
+        res.redirect('/login');
     } else {
         res.redirect('/login');
     }
