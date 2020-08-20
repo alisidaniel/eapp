@@ -25,9 +25,11 @@
                         <!-- <p>Address: </p> -->
                     </div>  
                   </div>
-                  <form action="/add/shipping" method="POST" id="paymentForm">
+                  
                     <div class="row">
+                       
                         <div class="col-lg-8 col-md-6">
+                             <form action="/add/shipping" method="POST" >
                             <% if (address == null) { %>
                                      <div class="row">
                                 <div class="col-lg-6">
@@ -45,7 +47,7 @@
                             </div>
                             <div class="checkout__input">
                                 <p>Address<span>*</span></p>
-                                <input type="text" placeholder="Street Address" name="address" required value="" class="checkout__input__add">
+                                <input type="text" placeholder="Street Address" name="address" id="address" required value="" class="checkout__input__add">
                             </div>
                             <div class="checkout__input">
                                 <p>Town/City<span>*</span></p>
@@ -57,7 +59,7 @@
                             </div>
                             <div class="checkout__input">
                                 <p>Postcode / ZIP<span>*</span></p>
-                                <input type="text" name="postalCode" required value="">
+                                <input type="text" name="postalCode" id="postalCode" required value="">
                             </div>
 
 
@@ -67,7 +69,7 @@
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>Fist Name<span>*</span></p>
-                                        <input type="text" name="fname" id="fname" required value="">
+                                        <input type="text" name="fname" id="fname" required value="<%= address.dataValues.fname %>">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -79,7 +81,7 @@
                             </div>
                             <div class="checkout__input">
                                 <p>Address<span>*</span></p>
-                                <input type="text" placeholder="Street Address" name="address" required value="<%= address.dataValues.address %>" class="checkout__input__add">
+                                <input type="text" placeholder="Street Address" name="address" id="address" required value="<%= address.dataValues.address %>" class="checkout__input__add">
                             </div>
                             <div class="checkout__input">
                                 <p>Town/City<span>*</span></p>
@@ -91,14 +93,20 @@
                             </div>
                             <div class="checkout__input">
                                 <p>Postcode / ZIP<span>*</span></p>
-                                <input type="text" name="postalCode" required value="<%= address.dataValues.postalCode %>">
+                                <input type="text" name="postalCode" id="postalCode" required value="<%= address.dataValues.postalCode %>">
                             </div>
 
                             <% } %>
-                        
-                        </div>
+                                <div class="checkout__input">
+                                    <button class="btn site-btn">Save shipping address</button>
+                                </div>
+                             </form>
+                          </div>
+                       
+
                         
                         <div class="col-lg-4 col-md-6">
+                            <form method="POST" id="paymentForm">
                             <div class="checkout__order">
                                 <h4>Your Order</h4>
                                 <div class="checkout__order__products">Products<span>Total</span></div>
@@ -141,27 +149,42 @@
                                     </label>
                                 </div>
 
-                                <button type="submit" class="site-btn" onclick="payWithPaystack()">PLACE ORDER</button>
+                                <button type="submit" id="checkadd" class="site-btn" onclick="payWithPaystack()">PLACE ORDER</button>
                             </div>
-                        </div>
+                          </form>
+                        </div>    
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
     <!-- Checkout Section End -->
 
 <%- include('layouts/footer') %>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="https://js.paystack.co/v1/inline.js"></script> 
 
 <script type="text/javascript">
     $(document).ready(function(){
 
+        var address = document.getElementById("address").value;
+        var postalCode = document.getElementById("postalCode").value;
+        var fname = document.getElementById("fname").value;
+
         const paymentForm = document.getElementById('paymentForm');
         const amt = document.getElementById('amount').value;
         paymentForm.addEventListener("submit", payWithPaystack, false);
+
+ 
         function payWithPaystack(e) {
           e.preventDefault();
+
+        if (address == '' || postalCode == '' || fname == '') {
+
+            // $("#checkadd").prop("disabled", true);
+
+            swal("Error!", "Shopping addres not found.", "error");
+        }else{
+
           let handler = PaystackPop.setup({
             key: 'pk_test_5fafc33dae645b70e203e5b65c3a6b15c2deeb05', // Replace with your public key
             email: document.getElementById("email").value,
@@ -171,31 +194,36 @@
             // ref: ''+Math.floor((Math.random() * 1000000000) + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
             // label: "Optional string that replaces customer email"
             onClose: function(){
-              alert('Window closed.');
+             
+              swal("Window closed.");
             },
             callback: function(response){
                 $.ajax({
                 url: '/post/order',
                 method: 'post',
-                dataType: "json",
                 data:{response:response, amount: amt},
                 success: function (response) {
                   // the transaction status is in response.data.status
                     let message = 'Payment complete! Reference: ' + response;
-                    console.log(message);
-                    console.log(response.redirecturl)
-                    Window.location.replace("/payment/successful");
-                    Window.location.replace(response.redirecturl);
-                    Window.location.href = 'http://localhost:3000/payment/successful';
+                    // console.log(message);
+
+                    swal("Shopping complete!", "You click button to see order!", "success").then(res => {
+                        window.location.replace("http://localhost:3000/payment/successful");
+                    });
+                 
                 },
                 error: function (error){
-                    console.log(error);
+                    console.log(error)
+                    swal("Error!", `${error}`, "error");
                 }
               });
             }
           });
+
           handler.openIframe();
         }
+
+    }
 
     });
 </script>

@@ -25,18 +25,18 @@
                                 <h4>Latest Products</h4>
                                 <div class="latest-product__slider owl-carousel">
                                     <div class="latest-prdouct__slider__item">
-                                      <% for (let i = 0; i < newProducts.length; i++) {
+                                      <% for (let i = 4; i < newProducts.length; i++) {
 
                                             var images = JSON.parse(newProducts[i].dataValues.images);
                                             var newImages = images[0]; 
                                        %>
-                                        <a href="#" class="latest-product__item">
+                                        <a href="/product-details?id=<%= newProducts[i].dataValues.id %>" class="latest-product__item">
                                             <div class="latest-product__item__pic">
                                                 <img src="/assets/uploads/<%= newImages %>" alt="">
                                             </div>
                                             <div class="latest-product__item__text">
-                                                <h6><%= newProducts[i].dataValues.title %></h6>
-                                                <span>₦<%= newProducts[i].dataValues.price.toLocaleString() %></span>
+                                          <!--       <h6><%= newProducts[i].dataValues.title %></h6>
+                                                <span>₦<%= newProducts[i].dataValues.price.toLocaleString() %></span> -->
                                             </div>
                                         </a>
                                      <% } %>
@@ -63,8 +63,8 @@
                                             data-setbg="/assets/uploads/<%= newImages %>">
                                             <div class="product__discount__percent">-0.1%</div>
                                             <ul class="product__item__pic__hover">
-                                                <li><a href="#"><i class="fa fa-retweet"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                                                <li><a href="/product-details?id=<%= product[i].dataValues.id %>"><i class="fa fa-retweet"></i></a></li>
+                                                <!-- <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li> -->
                                             </ul>
                                         </div>
                                         <div class="product__discount__item__text">
@@ -111,8 +111,8 @@
                             <div class="product__item">
                                 <div class="product__item__pic set-bg" data-setbg="/assets/uploads/<%= newImages %>">
                                     <ul class="product__item__pic__hover">
-                                        <li><a href="#"><i class="fa fa-retweet"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                                        <li><a href="/product-details?id=<%= product[i].dataValues.id %>"><i class="fa fa-retweet"></i></a></li>
+                                        <!-- <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li> -->
                                     </ul>
                                 </div>
                                 <div class="product__item__text">

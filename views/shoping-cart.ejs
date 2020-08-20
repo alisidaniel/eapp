@@ -25,10 +25,13 @@
 
                                     if(products[j].dataValues.id == cartItem[i].dataValues.productId) {
 
+                                           var images = JSON.parse(products[j].dataValues.images);
+                                           var newImages = images[0]; 
+
                                 %>
                                 <tr>
                                     <td class="shoping__cart__item">
-                                        <img src="img/cart/cart-1.jpg" alt="">
+                                        <img src="/assets/uploads/<%= newImages %> " alt="">
                                         <h5><%= products[j].dataValues.title %></h5>
                                     </td>
                                     <td class="shoping__cart__price">

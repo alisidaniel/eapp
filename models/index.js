@@ -51,6 +51,7 @@ db.ShippingAddress.belongsTo(db.User, { as: "User", foreignKey: "userId" });
 //Order relation
 db.User.hasMany(db.Order, { as: "Order", foreignKey: "userId" });
 db.Order.belongsTo(db.User, { as: "User", foreignKey: "userId" });
+db.Order.belongsTo(db.Product, {as: "Product", foreignKey: "productId"});
 
 //Cart relations
 // db.Cart.belongsTo(db.User, { as: "User", foreignKey: "userId"});
