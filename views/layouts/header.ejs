@@ -63,7 +63,9 @@
                     <ul class="header__menu__dropdown">
                         <li><a href="/shoping-cart">Shoping Cart</a></li>
                         <li><a href="/checkout">Check Out</a></li>
-                        <li><a href="/orders">Orders</a></li>
+                        <% if (data) { %>
+                        <li><a href="/Orders">Orders</a></li>
+                        <% } %>
                     </ul>
                 </li>
                 <li><a href="/contact">Contact</a></li>
@@ -78,8 +80,8 @@
         </div>
         <div class="humberger__menu__contact">
             <ul>
-                <li><i class="fa fa-envelope"></i> xxx@hello.com</li>
-                <li>xxxx xxx xxxx </li>
+                <li><i class="fa fa-envelope"></i> Solomon.enudi@gmail.com</li>
+                <li>+407 7077 3875 </li>
             </ul>
         </div>
     </div>
@@ -93,7 +95,7 @@
                     <div class="col-lg-6 col-md-6">
                         <div class="header__top__left">
                             <ul>
-                                <li><i class="fa fa-envelope"></i> hello@xxx.com</li>
+                                <li><i class="fa fa-envelope"></i> Solomon.enudi@gmail.com</li>
                                 <li>Free Shipping for all Order of NGN 50</li>
                             </ul>
                         </div>
@@ -132,7 +134,9 @@
                                 <ul class="header__menu__dropdown">
                                     <li><a href="/shoping-cart">Shoping Cart</a></li>
                                     <li><a href="/checkout">Check Out</a></li>
-                                    <li><a href="/orders">Orders</a></li>
+                                        <% if (data) { %>
+                                        <li><a href="/orders">Orders</a></li>
+                                        <% } %>
                                 </ul>
                             </li>
                             <li><a href="/contact">Contact</a></li>

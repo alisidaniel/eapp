@@ -55,8 +55,6 @@ router.get('/', async function(req, res, next) {
 
     let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
 
-    console.log(req.cookies)
-
     let categoryData = await Category.findAll();
 
     let productData = await Product.findAll();
@@ -404,14 +402,29 @@ router.post('/post/order', async function(req, res, next){
 
     let userId = req.session.user === undefined ? req.cookies.user_sid : req.session.user.id;
 
+    var cartItem = await Cart.findAll({where:{
+        userId : userId
+    }});
+
     if (req.body.response.status === 'success'){
 
-        let data = await Order.create({
-            reference: req.body.response.reference,
-            amount: req.body.amount,
-            status: 0,
-            userId: userId
-        });
+        cartItem.forEach(cart => {
+
+            Order.create({
+                reference: req.body.response.reference,
+                amount: cart.dataValues.unitPrice,
+                status: 0,
+                userId: cart.dataValues.userId,
+                productId: cart.dataValues.productId
+            });
+
+            Cart.update({userId:null}, {
+                where:{
+                    userId:cart.dataValues.userId
+                }
+            })
+
+        }); 
 
     }
 
@@ -433,9 +446,11 @@ router.get('/orders', sessionChecker, async function(req, res, next){
         userId: userId, status: 0
     }});
 
+    let products = await Product.findAll();
+
     res.render('order', {
         data: req.session.user, cartItem: cartItem,
-        categories: categoryData, orders:orders
+        categories: categoryData, orders:orders, products: products
     });
 });
 

@@ -11,19 +11,41 @@
 			    <tr>
 			      <th scope="col">#</th>
 			      <th scope="col">reference</th>
+			      <th scope="col">Product</th>
 			      <th scope="col">amount</th>
 			      <th scope="col">status</th>
+			      <th scope="col">Date Created</th>
 			    </tr>
 			  </thead>
 			  <tbody>
-			  <% for(var i = 0; i < orders.length; i++) { %>
+			  <% 
+
+			  	for(var i = 0; i < orders.length; i++) {
+
+			  	 for (var j = 0; j < products.length; j++) {
+
+                   if(products[j].dataValues.id == orders[i].dataValues.productId) {
+
+                       var images = JSON.parse(products[j].dataValues.images);
+                       var newImages = images[0]; 
+
+			  %>
 			    <tr>
 			      <th scope="row"><%= i + 1 %></th>
 			      <td><%= orders[i].dataValues.reference %></td>
+			      <td>
+			      	<div class="media">
+					  <img src="/assets/uploads/<%= newImages %>" class="mr-3" width="50" alt="...">
+					  <div class="media-body">
+					    <h5 class="mt-0"><%= products[j].dataValues.title %></h5>
+					  </div>
+					</div>
+			      </td>
 			      <td>₦<%= orders[i].dataValues.amount.toLocaleString() %></td>
-			      <td class="text-info"><%= orders[i].dataValues.status == 0 ? 'Pending' : 'Shipped' %></td>
+			      <td class="text-info"><%= orders[i].dataValues.status == 0 ? 'Shipping in progress' : 'Shipped' %></td>
+			      <td><%= orders[i].dataValues.createdAt.toDateString() %></td>
 			    </tr>
-			  <% } if ( orders.length == 0 ) { %>
+			  <% } } } if ( orders.length == 0 ) { %>
 
 			  	<tr>
 			  		<td colspan="6">No order found. </td>
