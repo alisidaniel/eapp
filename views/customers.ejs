@@ -1,0 +1,39 @@
+<%- include('layouts/adminheader') %>
+<%- include('layouts/nav') %>
+
+<div class="container">
+    <div class="row">
+        <h5 class="mb-2">List of customers</h5>
+
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">S/N</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">email</th>
+                    <th scope="col">Date Created</th>
+                    <th scope="col">Role</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <% for (let i = 0; i < user.length; i++){ %>
+                  <tr>
+                    <th scope="row"><%= i + 1 %></th>
+                    <td><%= user[i].dataValues.username %></td>
+                    <td><%= user[i].dataValues.email %></td>
+                    <td><%= user[i].dataValues.createdAt; %></td>
+                    <td>
+                        <span class="text-info"><%= user[i].dataValues.isAdmin == 1 ? 'Admin' : 'User' %></span>
+                    </td>
+                  </tr>
+                  <% } %>
+                </tbody>
+              </table>
+        </div>
+    </div>
+</div>
+
+<%- include('layouts/adminfooter') %>
+</body>
+</html>

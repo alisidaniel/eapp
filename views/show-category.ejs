@@ -1,0 +1,41 @@
+<%- include('layouts/adminheader') %>
+<%- include('layouts/nav') %>
+<div class="container">
+    <div class="row">
+        <h5 class="mb-2">List of categories</h5>
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">S/N</th>
+                    <th scope="col">Category Name</th>
+                    <th scope="col">Sub Categories</th>
+                    <th scope="col">Date Created</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <% for (let i = 0; i < categories.length; i++){ %>
+                  <tr>
+                    <th scope="row"><%= i + 1 %></th>
+                    <td><%= categories[i].dataValues.name %></td>
+                    <td><%= categories[i].dataValues.subcategory.substring(0,30); %>...</td>
+                    <td><%= categories[i].dataValues.createdAt; %></td>
+                    <td>
+                        <form method="POST" action="/delete/category">
+                            <input type="hidden" name="categoryId" value="<%= categories[i].dataValues.id %>" />
+                            <button class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                  </tr>
+                  <% } %>
+                </tbody>
+              </table>
+        </div>
+    </div>
+</div>
+
+
+<%- include('layouts/adminfooter') %>
+</body>
+</html>

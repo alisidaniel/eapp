@@ -1,40 +1,27 @@
 <%- include('layouts/adminheader') %>
-    
-
 <%- include('layouts/nav') %>
 
-
 <!-- Featured Section Begin -->
-<section class="featured spad">
+<!-- <section class="featured spad"> -->
     <div class="container">
         <div class="row">
-            <div class="col-lg-7">
-                <p class=""><b>Admin Page</b></p>
-                <p class="text text-success">Welcome back</p>
-                <p class="text text-success">Logged In</p>
-            </div>
-            <div class="col-lg-5">
-
-                <ul class="nav flex-column">
-                  <li class="nav-item">
-                    <a class="nav-link active" href="/admin">Home</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="/product">Upload product</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="/category">Add category</a>
-                  </li>
-                </ul>
-                
+            <div class="col-lg-12">
+              <div class="card">
+                <div class="card-header">
+                  Administrative Portal
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title text-captalize"><b>Username</b> <%= user.dataValues.username %></h5>
+                  <p class="card-text"><b>Email  </b><%= user.dataValues.email %> </p>
+                  <a href="/show-orders" class="btn btn-warning">Go to orders</a>
+                </div>
+              </div>
             </div>
         </div>
     </div>
-</section>
+<!-- </section> -->
 <!-- Featured Section End -->
 
 <%- include('layouts/adminfooter') %>
-
 </body>
-
 </html>

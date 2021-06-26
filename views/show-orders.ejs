@@ -1,0 +1,39 @@
+<%- include('layouts/adminheader') %>
+<%- include('layouts/nav') %>
+
+<div class="container">
+    <div class="row">
+        <h5 class="mb-2">List of products</h5>
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">S/N</th>
+                    <th scope="col">Order Id</th>
+                    <th scope="col">Sub Categories</th>
+                    <th scope="col">Date Created</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <% for (let i = 0; i < orders.length; i++){ %>
+                  <tr>
+                    <th scope="row"><%= i + 1 %></th>
+                    <td><%= orders[i].dataValues.reference %></td>
+                    <td>NGN <%= orders[i].dataValues.amount %></td>
+                    <td><%= orders[i].dataValues.createdAt; %></td>
+                    <td>
+                        <span class="text-info"><%= orders[i].dataValues.status === 0 ? 'Awaiting Dispatch' : 'Delivered'; %></span>
+                    </td>
+                  </tr>
+                  <% } %>
+                </tbody>
+              </table>
+        </div>
+    </div>
+</div>
+
+
+<%- include('layouts/adminfooter') %>
+</body>
+</html>
