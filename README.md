@@ -1,5 +1,5 @@
-# Bucuresti
-  Bucuresti eCommerce project 
+# Eapp
+  Test eCommerce project 
   
   Node.js
   MySQL
